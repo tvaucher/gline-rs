@@ -10,6 +10,7 @@ description = "Inference engine for GLiNER models"
 homepage = "https://github.com/fbilhaut/gline-rs"
 repository = "https://github.com/fbilhaut/gline-rs"
 documentation = "https://docs.rs/gline-rs/"
+exclude = [ "data", "models" ]
 
 [lib]
 name = "gliner"
@@ -34,3 +35,5 @@ ort = { version="=2.0.0-rc.9" }
 tokenizers = { version="0.21.0", features=["http"] }
 ndarray = "0.16.0"
 csv = "1.3"
+
+
