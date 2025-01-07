@@ -1,0 +1,172 @@
+# 🌿 gline-rs: Inference Engine for GLiNER Models, in Rust
+
+## 💬 Introduction
+
+`gline-rs` is an inference engine for [GLiNER](https://github.com/urchade/GLiNER/tree/main) models. These language models proved to be efficient at zero-shot [Named Entity Recognition](https://paperswithcode.com/task/cg) (NER) and other tasks such as [Relation Extraction](https://paperswithcode.com/task/relation-extraction), while consuming less resources than large generative (LLMs).
+
+This implementation has been written from the ground up in Rust, and supports both span- and token-oriented variants (for inference only). It aims to provide a production-grade and  user-friendly API in a modern and safe programming language, including a clean and maintainable implementation of the mechanics surrounding these models.
+
+For those interested, it can also help getting a deep understanding of GLiNER's operation.
+
+## 💡 Background and Motivation
+
+Common drawbacks of machine learning systems include cryptic implementations and high resource consumption. `gline-rs` aims to take a step toward a more maintainable and sustainable approach. 🌱
+
+**Why [GLiNER](https://github.com/urchade/GLiNER/tree/main)?** 
+
+The term stands for "Generalist and Lightweight Model for Named Entity Recognition", after an original work from [Zaratiana at al.](https://arxiv.org/abs/2311.08526) It now refers to a family of lightweight models capable of performing various zero-shots extractions using a bidirectional transformer architecture (BERT-like). For this kind of tasks, this approach can be much more relevant than full-blown LLMs.
+
+However, it is characterized by a number of operations that need to be performed both upstream and downstream of applying the pre-trained model. These operations are conceptually described in the academic papers, but the implementations details are not trivial to understand and reproduce. To address this issue, this implementation emphasizes code readability, modularity, and documentation.
+
+**Why [Rust](https://www.rust-lang.org)?** 
+
+The original implementation was written in Python, which is widely used for machine learning, but not particularly efficient and not always suitable in production environments.
+
+Rust combines bare-metal performance with memory and thread safety. It helps to write fast, reliable, and resource-efficient code by ensuring sound concurrency and memory use at compile time. For example, the borrow checker enforces strict ownership rules, reducing costly operations like cloning to prevent data races. 
+
+Although it is not yet as widespread as Python in the ML world, it makes an excellent candidate for enabling reliable and efficient ML systems.
+
+
+## 🎓 Public API
+
+Include `gline-rs` as a regular dependency in your `Cargo.toml`:
+
+```toml
+[dependencies]
+"gliner" = "0.9.0"
+```
+
+The public API is self-explanatory:
+
+```rust
+let model = GLiNER::<TokenMode>::new(
+    Parameters::default(),
+    "tokenizer.json",
+    "model.onnx",
+)?;
+
+let input = TextInput::from_str(
+    &[
+        "My name is James Bond.", 
+        "I like to drive my Aston Martin.",
+    ],
+    &[
+        "person", 
+        "vehicle",
+    ],
+)?;
+
+let output = model.inference(input)?;
+
+// => "James Bond" : "person"
+// => "Aston Martin" : "vehicle"
+```
+
+Please refer the the `examples` source codes for complete code.
+
+
+## 🧬 Getting the Models
+
+To leverage `gline-rs`, you need the appropriate models in [ONNX](https://onnx.ai) format.
+
+Ready-to-use models can be downloaded from 🤗 Hugging Face repositories. For example:
+
+* [gliner small 2.1](https://huggingface.co/onnx-community/gliner_small-v2.1)
+* [gliner multitask large 0.5](https://huggingface.co/knowledgator/gliner-multitask-large-v0.5)
+
+To run the examples without any modification, this file structure is expected:
+
+For token-mode:
+```
+models/gliner-multitask-large-v0.5/tokenizer.json
+models/gliner-multitask-large-v0.5/onnx/model.onnx
+```
+
+For span-mode:
+```
+models/gliner_small-v2.1/tokenizer.json
+models/gliner_small-v2.1/onnx/model.onnx
+```
+
+The original GLiNER implementation also provides [some tools](https://github.com/urchade/GLiNER/blob/main/examples/convert_to_onnx.ipynb) to convert models by your own.
+
+
+## 🚀 Running the Examples
+
+They are located in the `examples` directory. For instance in token mode:
+
+```bash
+$ cargo run --example token-mode
+```
+
+Expected output:
+
+```
+0 | James Bond      | person     | 99.7%
+1 | James           | person     | 98.1%
+1 | Chelsea         | location   | 96.4%
+1 | London          | location   | 92.4%
+2 | James Bond      | person     | 99.4%
+3 | Aston Martin    | vehicle    | 99.9%
+```
+
+## ⏱️ Performances
+
+Comparing performances from one implementation to another is complicated, as they depend on many factors. But according to the first measures, it appears that `gline-rs` can run **4x faster** on CPU than the original implementation out of the box:
+
+| Implementation | Sequences/second |
+|----------------|------------------|
+| gline-rs       | 6.67             |
+| GLiNER.py      | 1.61             |
+
+Both implementations have been tested under the following configuration:
+
+* Inference mode: CPU 
+* Dataset: subset of the [NuNER](https://huggingface.co/datasets/numind/NuNER) dataset (first 100 entries)
+* Mode: token / flat_ner=true / multi_label=false
+* Number of entity classes: 3
+* Threshold: 0.5
+* Model: [gliner-multitask-large-v0.5](https://huggingface.co/knowledgator/gliner-multitask-large-v0.5)
+* CPU specs: 2.3Ghz Intel Core i9 with 8 cores (12 threads)
+
+
+## 🧪 Current Status
+
+**Although it is sufficiently mature to be embraced by the community, the current version (0.9.x) should not be considered as production-ready.**
+
+For any critical use, it is advisable to wait until it has been extensively tested and `ort-2.0` (the ONNX runtime wrapper) has reached a stable release.
+
+The next version (0.9.1) will include options to leverage GPU-based execution providers (currently only CPU is supported).
+
+The first stable, production-grade release will be labeled **1.0.0**.
+
+
+## ⚙️ Design Principles
+
+`gline-rs` is written in pure and safe Rust (beside the ONNX runtime), with the following dependencies:
+
+* the [ort](https://ort.pyke.io) ONNX runtime wrapper,
+* the Hugging-Face [tokenizers](https://github.com/huggingface/tokenizers),
+* the [ndarray](https://docs.rs/ndarray/latest/ndarray/) crate,
+* the [regex](https://crates.io/crates/regex) crate.
+
+The implementation aims to clearly distinguish and comment each processing step, make them easily configurable, and model the pipeline concept almost declaratively. 
+
+Default configurations are provided, but it should be easy to adapt them:
+
+* One can have a look at the `model::{pipeline, input, output}` modules to see how the pre- and post-processing steps are defined by implementing the `Pipeline` trait.
+* Others traits like `Splitter` or `Tokenizer` can be easily leveraged to test with different implementations of the text-processing steps.
+* While there is always room for improvement, special care has been taken to craft idiomatic, generic, commented, and efficient code.
+
+
+## 📖 References and Acknowledgments
+
+The following papers were used as references:
+
+* [GLiNER: Generalist Model for Named Entity Recognition using Bidirectional Transformer](https://arxiv.org/abs/2311.08526) by Urchade Zaratiana, Nadi Tomeh, Pierre Holat and Thierry Charnois (2023).
+* [GLiNER multi-task: Generalist Lightweight Model for Various Information Extraction Tasks](https://arxiv.org/abs/2406.12925) by Ihor Stepanov and Mykhailo Shtopko (2024).
+* [Named Entity Recognition as Structured Span Prediction](https://aclanthology.org/2022.umios-1.1/) by Urchade Zaratiana, Nadi Tomeh, Pierre Holat, Thierry Charnois (2022).
+
+The original implementation was also used to check for the details. 
+
+Special thanks to the original authors of GLiNER for this great and original work. 🙏

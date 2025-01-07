@@ -1,0 +1,36 @@
+[package]
+name = "gline-rs"
+authors = ["Frédérik Bilhaut <frederik.bilhaut@gmail.com>"]
+version = "0.9.0"
+edition = "2021"
+license = "Apache-2.0"
+keywords = ["NLP", "NER", "GLiNER", "Transformer"]
+readme = "./Readme.md"
+description = "Inference engine for GLiNER models"
+homepage = "https://github.com/fbilhaut/gline-rs"
+repository = "https://github.com/fbilhaut/gline-rs"
+documentation = "https://docs.rs/gline-rs/"
+
+[lib]
+name = "gliner"
+path = "src/lib.rs"
+
+[[example]]
+name = "token-mode"
+path = "src/examples/token_mode.rs"
+
+[[example]]
+name = "span-mode"
+path = "src/examples/span_mode.rs"
+
+[[example]]
+name = "benchmark"
+path = "src/examples/benchmark.rs"
+
+[dependencies]
+regex = "1.11.1"
+num-traits = "0.2"
+ort = { version="=2.0.0-rc.9" }
+tokenizers = { version="0.21.0", features=["http"] }
+ndarray = "0.16.0"
+csv = "1.3"
