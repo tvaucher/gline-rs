@@ -24,6 +24,20 @@ pub struct Parameters {
     pub max_length: Option<usize>,
 }
 
+impl Default for Parameters {
+    /// Default configuration, which can be safely used in most cases
+    fn default() -> Self {
+        Self::new(
+            0.5, 
+            12, 
+            Some(512),
+            true, 
+            false,
+            4,
+        )
+    }
+}
+
 impl Parameters {
     /// New configuration specifying every parameter
     pub fn new(threshold: f32, max_width: usize, max_length: Option<usize>, flat_ner: bool, multi_label: bool, threads: usize) -> Self {
@@ -35,18 +49,6 @@ impl Parameters {
             multi_label,
             threads,
         }
-    }
-
-    /// Default configuration, which can be safely used in most cases
-    pub fn default() -> Self {
-        Self::new(
-            0.5, 
-            12, 
-            Some(512),
-            true, 
-            false,
-            4,
-        )
     }
 
     pub fn with_threshold(mut self, threshold: f32) -> Self {

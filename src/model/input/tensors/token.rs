@@ -34,11 +34,9 @@ impl<'a> TokenTensors<'a> {
 
 
 /// Composable: Encoded => TokenTensors
+#[derive(Default)]
 pub struct EncodedToTensors { }
 
-impl EncodedToTensors {
-    pub fn new() -> Self { Self { } }
-}
 
 impl<'a> Composable<EncodedInput, TokenTensors<'a>> for EncodedToTensors {
     fn apply(&self, input: EncodedInput) -> Result<TokenTensors<'a>> {
@@ -48,11 +46,9 @@ impl<'a> Composable<EncodedInput, TokenTensors<'a>> for EncodedToTensors {
 
 
 /// Composable: TokenTensors => (SessionInput, TensorsMeta) 
+#[derive(Default)]
 pub struct TensorsToSessionInput { }
 
-impl TensorsToSessionInput {
-    pub fn new() -> Self { Self { } }
-}
 
 impl<'a> Composable<TokenTensors<'a>, (SessionInputs<'a, 'a>, TensorsMeta)> for TensorsToSessionInput {
     fn apply(&self, input: TokenTensors<'a>) -> Result<(SessionInputs<'a, 'a>, TensorsMeta)> {

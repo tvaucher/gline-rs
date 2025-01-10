@@ -114,12 +114,10 @@ impl<'a> Composable<EncodedInput, SpanTensors<'a>> for EncodedToTensors {
 
 
 /// Composable: SpanTensors => (SessionInput, TensorsMeta) 
+#[derive(Default)]
 pub struct TensorsToSessionInput { 
 }
 
-impl TensorsToSessionInput {
-    pub fn new() -> Self { Self { } }
-}
 
 impl<'a> Composable<SpanTensors<'a>, (SessionInputs<'a, 'a>, TensorsMeta)> for TensorsToSessionInput {
     fn apply(&self, input: SpanTensors<'a>) -> Result<(SessionInputs<'a, 'a>, TensorsMeta)> {

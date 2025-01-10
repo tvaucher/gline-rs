@@ -32,7 +32,7 @@ impl TensorsToDecoded {
     fn decode(&self, input: &TensorOutput) -> Result<Vec<Vec<Span>>> {
         // prepare output vector
         let batch_size = input.meta.texts.len();
-        let mut result: Vec<Vec<Span>> = std::iter::repeat_with(|| Vec::new()).take(batch_size).collect();
+        let mut result: Vec<Vec<Span>> = std::iter::repeat_with(Vec::new).take(batch_size).collect();
 
         // look for logits and check its shape
         let logits = input.tensors.get("logits").ok_or("logits not found in model output")?;

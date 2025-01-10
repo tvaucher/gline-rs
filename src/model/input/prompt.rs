@@ -84,14 +84,10 @@ impl PromptInput {
 
 
 /// Composable: Tokenized => Prompt
+#[derive(Default)]
 pub struct TokenizedToPrompt { 
 }
 
-impl TokenizedToPrompt {
-    pub fn new() -> Self {
-        Self { }
-    }
-}
 
 impl Composable<TokenizedInput, PromptInput> for TokenizedToPrompt {
     fn apply(&self, input: TokenizedInput) -> Result<PromptInput> {
@@ -106,6 +102,8 @@ mod tests {
 
     #[test]
     fn test() -> Result<()> {
+        // Silent some clippy warnings for unit tests
+        #![allow(clippy::get_first)]
         // Processing
         let splitter = crate::text::splitter::RegexSplitter::default()?;
         let batch = [ "This is a text !", "This is a longer one."];

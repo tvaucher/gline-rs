@@ -22,11 +22,9 @@ impl<'a> TensorOutput<'a> {
 
 
 /// Composable: (SessionOutput, TensorMeta) => TensorOutput
+#[derive(Default)]
 pub struct SessionOutputToTensors { }
 
-impl SessionOutputToTensors {
-    pub fn new() -> Self { Self {} }
-}
 
 impl<'a> Composable<(SessionOutputs<'a, 'a>, TensorsMeta), TensorOutput<'a>> for SessionOutputToTensors {
     fn apply(&self, input: (SessionOutputs<'a, 'a>, TensorsMeta)) -> Result<TensorOutput<'a>> {

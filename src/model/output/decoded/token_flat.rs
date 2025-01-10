@@ -27,7 +27,7 @@ impl FlatTokenDecoder {
         }
     }
 
-    fn decode(&self, model_output: &Vec<f32>, input: &TensorsMeta) -> Result<Vec<Vec<Span>>> {        
+    fn decode(&self, model_output: &[f32], input: &TensorsMeta) -> Result<Vec<Vec<Span>>> {        
         let tokens = &input.tokens;
         let batch_size = tokens.len();
         let num_entities = input.entities.len();
@@ -38,7 +38,7 @@ impl FlatTokenDecoder {
         let token_padding = num_entities;
 
         // prepare the set of spans
-        let mut spans: Vec<Vec<Span>> = iter::repeat_with(|| Vec::new()).take(batch_size).collect();
+        let mut spans: Vec<Vec<Span>> = iter::repeat_with(Vec::new).take(batch_size).collect();
 
         // iterate over the whole vector
         for start_idx in 0..position_padding {
@@ -90,7 +90,7 @@ impl FlatTokenDecoder {
         Ok(spans)
     }
 
-    #[inline] fn get(model_output: &Vec<f32>, index: usize) -> f32 {
+    #[inline] fn get(model_output: &[f32], index: usize) -> f32 {
         *model_output.get(index).unwrap()
     }
 }
@@ -112,7 +112,7 @@ impl<'a> Composable<TensorOutput<'a>, SpanOutput> for TensorsToDecoded {
     fn apply(&self, input: TensorOutput) -> Result<SpanOutput> {        
         let logits = input.tensors.get("logits").ok_or("logits not found in model output")?;
         let (_shape, logits) = logits.try_extract_raw_tensor::<f32>()?;
-        let spans = self.decoder.decode(&logits.to_vec(), &input.meta)?;        
+        let spans = self.decoder.decode(logits, &input.meta)?;        
         Ok(SpanOutput::new(spans))      
     }
 }

@@ -19,16 +19,16 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for SpanPipeline<S, T> {
     fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a> {
         composed![
             input::tokenized::RawToTokenized::new(&self.splitter, params.max_length),
-            input::prompt::TokenizedToPrompt::new(),
+            input::prompt::TokenizedToPrompt::default(),
             input::encoded::PromptsToEncoded::new(&self.tokenizer),
             input::tensors::span::EncodedToTensors::new(params.max_width),
-            input::tensors::span::TensorsToSessionInput::new()
+            input::tensors::span::TensorsToSessionInput::default()
         ]
     }
 
     fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a> {
         composed![
-            output::tensors::SessionOutputToTensors::new(),
+            output::tensors::SessionOutputToTensors::default(),
             output::decoded::span::TensorsToDecoded::new(params.threshold, params.max_width),            
             output::decoded::greedy::GreedySearch::new(params.flat_ner, params.multi_label)
         ]
@@ -50,7 +50,7 @@ pub type SpanMode = SpanPipeline<crate::text::splitter::RegexSplitter, crate::te
 
 
 /// Specific GLiNER implementation using the default span-mode pipeline
-impl<'a> super::super::GLiNER<SpanMode> {
+impl super::super::GLiNER<SpanMode> {
     pub fn new<P: AsRef<Path>>(params: Parameters, tokenizer_path: P, model_path: P) -> Result<Self> {
         Ok(Self {            
             model: super::super::Model::new(model_path, &params)?,

@@ -63,6 +63,8 @@ mod tests {
 
     #[test]
     fn test() -> Result<()> {
+        // Silent some clippy warnings for unit tests
+        #![allow(clippy::get_first)]
         // Processing
         let splitter = crate::text::splitter::RegexSplitter::default()?;
         let batch = [ "This is a text", "This is another one"];

@@ -25,7 +25,7 @@ impl GreedySearch {
     /// Perform greedy search
     /// 
     /// Note: spans are supposed to be sorted by start, and then end, offsets.
-    pub fn search(spans: &Vec<Span>, flat_ner: bool, multi_label: bool) -> Vec<Span> {
+    pub fn search(spans: &[Span], flat_ner: bool, multi_label: bool) -> Vec<Span> {
         if spans.is_empty() {
             return Vec::new();
         }
@@ -37,7 +37,7 @@ impl GreedySearch {
         while next < spans.len() {
             let prev_span = spans.get(prev).unwrap();
             let next_span = spans.get(next).unwrap();
-            if !Self::overlapping(&prev_span, &next_span, flat_ner, multi_label) {
+            if !Self::overlapping(prev_span, next_span, flat_ner, multi_label) {
                 result.push(prev_span.clone());
                 prev = next;
             }

@@ -21,7 +21,7 @@ pub struct TensorsToDecoded {
 impl TensorsToDecoded {
     pub fn new(threshold: f32, max_width: usize) -> Self {
         Self { 
-            threshold: threshold,
+            threshold,
             max_width,
         }
     }

@@ -51,7 +51,7 @@ impl EncodedInput {
 
         // Compute vectors for each prompt. The `encoding` structure (which is 
         // word by word) gets flattened, but the word-level information is 
-        // representedby the "word mask".
+        // still represented by the "word mask".
         let mut input_ids = Array::zeros((0, max_tokens));
         let mut attention_masks = Array::zeros((0, max_tokens));
         let mut word_masks = Array::zeros((0, max_tokens));
