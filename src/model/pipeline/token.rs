@@ -40,7 +40,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for TokenPipeline<S, T> {
 impl TokenPipeline<crate::text::splitter::RegexSplitter, crate::text::tokenizer::HFTokenizer> {
     pub fn new<P: AsRef<Path>>(tokenizer_path: P) -> Result<Self> {
         Ok(Self {
-            splitter: crate::text::splitter::RegexSplitter::default()?,
+            splitter: crate::text::splitter::RegexSplitter::default(),
             tokenizer: crate::text::tokenizer::HFTokenizer::from_file(tokenizer_path)?,
         })
     }

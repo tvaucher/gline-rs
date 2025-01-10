@@ -143,7 +143,7 @@ mod tests {
 
     #[test]
     fn test() -> Result<()> {        
-        let splitter = crate::text::splitter::RegexSplitter::default()?;        
+        let splitter = crate::text::splitter::RegexSplitter::default();        
         let tokenizer = crate::text::tokenizer::HFTokenizer::from_file("models/gliner_small-v2.1/tokenizer.json")?;
         let batch = [ "Short text", "This is a longer one, to test padding and gloubiboulga."];
         let entities = [ "Person", "Place" ];
@@ -183,7 +183,7 @@ mod tests {
 
     #[test]
     fn test2() -> Result<()> {        
-        let splitter = crate::text::splitter::RegexSplitter::default()?;        
+        let splitter = crate::text::splitter::RegexSplitter::default();        
         let tokenizer = crate::text::tokenizer::HFTokenizer::from_file(std::path::Path::new("models/gliner_small-v2.1/tokenizer.json"))?;
         let batch = [ "Paris is the capital of France. My name is Frédérik."];
         let entities = [ "city", "country", "person" ];

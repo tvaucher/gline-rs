@@ -66,7 +66,7 @@ mod tests {
         // Silent some clippy warnings for unit tests
         #![allow(clippy::get_first)]
         // Processing
-        let splitter = crate::text::splitter::RegexSplitter::default()?;
+        let splitter = crate::text::splitter::RegexSplitter::default();
         let batch = [ "This is a text", "This is another one"];
         let entities = [ "person", "place" ];
         let input = TextInput::from_str(&batch, &entities)?;

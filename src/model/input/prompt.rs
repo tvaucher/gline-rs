@@ -105,7 +105,7 @@ mod tests {
         // Silent some clippy warnings for unit tests
         #![allow(clippy::get_first)]
         // Processing
-        let splitter = crate::text::splitter::RegexSplitter::default()?;
+        let splitter = crate::text::splitter::RegexSplitter::default();
         let batch = [ "This is a text !", "This is a longer one."];
         let entities = [ "Person", "Place" ];
         let input = super::super::text::TextInput::from_str(&batch, &entities)?;

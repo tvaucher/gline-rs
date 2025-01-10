@@ -23,10 +23,13 @@ impl RegexSplitter {
         })
     }
 
-    pub fn default() -> Result<Self> {
-        Self::new("\\w+(?:[-_]\\w+)*|\\S")
-    }
+}
 
+impl Default for RegexSplitter {
+    fn default() -> Self {
+        const DEFAULT_REGEX: &str = "\\w+(?:[-_]\\w+)*|\\S";
+        Self::new(DEFAULT_REGEX).unwrap() // safe unwrap (as regex is const and correct)
+    }
 }
 
 
@@ -55,7 +58,7 @@ mod tests {
 
     #[test]
     fn test_default_regex_splitter() -> Result<()> {
-        let splitter = RegexSplitter::default()?;
+        let splitter = RegexSplitter::default();
         let tokens = splitter.split("This is an oh-yeah test", None)?;
         assert_eq!(tokens.len(), 5);
         let token = tokens.get(3).unwrap();
@@ -67,7 +70,7 @@ mod tests {
 
     #[test]
     fn test_unicode() -> Result<()> {
-        let splitter = RegexSplitter::default()?;
+        let splitter = RegexSplitter::default();
         let tokens = splitter.split("Word with accents: éàèèçîù foo bar", None)?;
         assert_eq!(tokens.len(), 7);        
         Ok(())
@@ -75,7 +78,7 @@ mod tests {
 
     #[test]
     fn test_limit() -> Result<()> {
-        let splitter = RegexSplitter::default()?;
+        let splitter = RegexSplitter::default();
         let tokens = splitter.split("w1 w2 w3 w4 w5 w6 w7 w8 w9 w10", Some(5))?;
         assert_eq!(tokens.len(), 5);
         assert_eq!(tokens.get(4).unwrap().text(), "w5");
