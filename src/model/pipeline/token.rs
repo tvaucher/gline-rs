@@ -4,7 +4,7 @@ use std::path::Path;
 use crate::util::result::Result;
 use super::super::super::text::{splitter::Splitter, tokenizer::Tokenizer};
 use super::super::super::util::compose::{compose, composed};
-use super::super::params::Parameters;
+use super::super::params::{Parameters, RuntimeParameters};
 use super::super::{input, output};
 use super::*;
 
@@ -52,9 +52,9 @@ pub type TokenMode = TokenPipeline<crate::text::splitter::RegexSplitter, crate::
 
 /// Specific GLiNER implementation using the default token-mode pipeline
 impl super::super::GLiNER<TokenMode> {
-    pub fn new<P: AsRef<Path>>(params: Parameters, tokenizer_path: P, model_path: P) -> Result<Self> {
+    pub fn new<P: AsRef<Path>>(params: Parameters, runtime_params: RuntimeParameters, tokenizer_path: P, model_path: P) -> Result<Self> {
         Ok(Self {            
-            model: super::super::Model::new(model_path, &params)?,
+            model: super::super::Model::new(model_path, runtime_params)?,
             pipeline: TokenPipeline::new(tokenizer_path)?,
             params,
         })

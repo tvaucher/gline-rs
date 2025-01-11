@@ -41,6 +41,7 @@ The public API is self-explanatory:
 ```rust
 let model = GLiNER::<TokenMode>::new(
     Parameters::default(),
+    RuntimeParameters::default(),
     "tokenizer.json",
     "model.onnx",
 )?;

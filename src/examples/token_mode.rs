@@ -1,5 +1,5 @@
 use gliner::util::result::Result;
-use gliner::model::{input::text::TextInput, params::Parameters, GLiNER};
+use gliner::model::{input::text::TextInput, params::{Parameters, RuntimeParameters}, GLiNER};
 use gliner::model::pipeline::token::TokenMode;
 
 /// Sample usage of the public API in token mode
@@ -8,6 +8,7 @@ fn main() -> Result<()> {
     println!("Loading model...");
     let model = GLiNER::<TokenMode>::new(
         Parameters::default(),
+        RuntimeParameters::default(),
         "models/gliner-multitask-large-v0.5/tokenizer.json",
         "models/gliner-multitask-large-v0.5/onnx/model.onnx",
     )?;

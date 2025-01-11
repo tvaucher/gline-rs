@@ -1,3 +1,4 @@
+use gliner::model::params::RuntimeParameters;
 use gliner::util::result::Result;
 use gliner::model::{input::text::TextInput, params::Parameters, GLiNER};
 use gliner::model::pipeline::span::SpanMode;
@@ -8,6 +9,7 @@ fn main() -> Result<()> {
     println!("Loading model...");
     let model = GLiNER::<SpanMode>::new(
         Parameters::default(),
+        RuntimeParameters::default(),
         "models/gliner_small-v2.1/tokenizer.json",
         "models/gliner_small-v2.1/onnx/model.onnx",
     )?;

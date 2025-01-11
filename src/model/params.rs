@@ -1,10 +1,11 @@
 //! Processing and inferencing parameters
 
+use ort::execution_providers::ExecutionProviderDispatch;
+
 
 /// Represents the set of parameters for the whole pipeline
 /// 
 /// * pre-processing
-/// * inferencing
 /// * post-processing
 /// 
 /// The easiest way to instanciate sound parameters is to use the
@@ -15,9 +16,7 @@ pub struct Parameters {
     /// Flat NER means that an entity can not embed another one (default: true)
     pub flat_ner: bool,
     /// Multi-label means that the same span can belong to multiple classes (default: false)
-    pub multi_label: bool,
-    /// Number ot threads
-    pub threads: usize,
+    pub multi_label: bool,    
     /// For span mode, maximum span width (default: 12)
     pub max_width: usize,
     /// Maximum sequence length (default: 512)
@@ -33,21 +32,19 @@ impl Default for Parameters {
             Some(512),
             true, 
             false,
-            4,
         )
     }
 }
 
 impl Parameters {
     /// New configuration specifying every parameter
-    pub fn new(threshold: f32, max_width: usize, max_length: Option<usize>, flat_ner: bool, multi_label: bool, threads: usize) -> Self {
+    pub fn new(threshold: f32, max_width: usize, max_length: Option<usize>, flat_ner: bool, multi_label: bool) -> Self {
         Self { 
             threshold, 
             max_width, 
             max_length,
             flat_ner,
             multi_label,
-            threads,
         }
     }
 
@@ -76,9 +73,41 @@ impl Parameters {
         self
     }
 
+}
+
+
+/// Represents the set of parameters for the inference engine
+/// 
+/// The easiest way to instanciate sound parameters is to use the
+/// `default()` constructor and then use individual setters as needed.
+pub struct RuntimeParameters {
+    /// Number ot threads (default: 4)
+    pub threads: usize,
+    /// Execution providers (default: none (-> CPU))
+    pub execution_providers: Vec<ExecutionProviderDispatch>,
+}
+
+impl RuntimeParameters {
+    pub fn new(threads: usize, execution_providers: impl IntoIterator<Item = ExecutionProviderDispatch>) -> Self {
+        Self {
+            threads,
+            execution_providers: execution_providers.into_iter().collect(),
+        }
+    }
+
     pub fn with_threads(mut self, threads: usize) -> Self {
         self.threads = threads;
         self
     }
 
+    pub fn with_execution_providers(mut self, execution_providers: impl IntoIterator<Item = ExecutionProviderDispatch>) -> Self {
+        self.execution_providers = execution_providers.into_iter().collect();
+        self
+    }
+}
+
+impl Default for RuntimeParameters {
+    fn default() -> Self {
+        Self::new(4, [])
+    }
 }
