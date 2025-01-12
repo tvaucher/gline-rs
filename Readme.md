@@ -33,7 +33,7 @@ Include `gline-rs` as a regular dependency in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-"gline-rs" = "0.9.0"
+"gline-rs" = "0.9.1"
 ```
 
 The public API is self-explanatory:
@@ -171,8 +171,6 @@ Both implementations have been tested under the following configuration:
 **Although it is sufficiently mature to be embraced by the community, the current version (0.9.x) should not be considered as production-ready.**
 
 For any critical use, it is advisable to wait until it has been extensively tested and `ort-2.0` (the ONNX runtime wrapper) has reached a stable release.
-
-The next version (0.9.1) will include options to leverage GPU-based execution providers (currently only CPU is supported).
 
 The first stable, production-grade release will be labeled **1.0.0**.
 
