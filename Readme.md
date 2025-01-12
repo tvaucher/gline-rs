@@ -111,6 +111,41 @@ Expected output:
 3 | Aston Martin    | vehicle    | 99.9%
 ```
 
+## ⚡️ GPU/NPU Inferences
+
+One can (should) leverage `ort` execution providers to perform faster inferences on GPU/NPU hardware.
+
+An example is provided in `examples/gpu.rs`. Activating appropriate features (see related section) is 
+necessary for this to work (otherwise the example will silently fall back to CPU). For example:
+
+```console
+$ cargo run --example gpu --features=cuda
+```
+
+## 📦 Create Features
+
+This create mirrors the following `ort` features to allow for activation of execution providers:
+
+* `cuda`
+* `tensorrt`
+* `directml`
+* `coreml`
+* `rocm`
+* `openvino`
+* `onednn`
+* `xnnpack`
+* `qnn`
+* `cann`
+* `nnapi`
+* `tvm`
+* `acl`
+* `armnn`
+* `migraphx`
+* `vitis`
+* `rknpu`
+
+Please refer to the [ort documentation](https://ort.pyke.io/perf/execution-providers) for details about the related execution providers and their particular requirements.
+
 ## ⏱️ Performances
 
 Comparing performances from one implementation to another is complicated, as they depend on many factors. But according to the first measures, it appears that `gline-rs` can run **4x faster** on CPU than the original implementation out of the box:
