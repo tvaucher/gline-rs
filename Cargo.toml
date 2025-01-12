@@ -25,12 +25,12 @@ name = "span-mode"
 path = "src/examples/span_mode.rs"
 
 [[example]]
-name = "gpu"
-path = "src/examples/gpu.rs"
+name = "benchmark-cpu"
+path = "src/examples/benchmark_cpu.rs"
 
 [[example]]
-name = "benchmark"
-path = "src/examples/benchmark.rs"
+name = "benchmark-gpu"
+path = "src/examples/benchmark_gpu.rs"
 
 [dependencies]
 regex = "1.11.1"
@@ -40,11 +40,9 @@ tokenizers = { version="0.21.0", features=["http"] }
 ndarray = "0.16.0"
 csv = "1.3"
 
-#[lints.clippy]
-#unwrap_used = "warn"
-
 [features]
 default = []
+load-dynamic = ["ort/load-dynamic"]
 cuda = ["ort/cuda"]
 tensorrt = ["ort/tensorrt"]
 directml = ["ort/directml"]
@@ -62,3 +60,6 @@ armnn = ["ort/armnn"]
 migraphx = ["ort/migraphx"]
 vitis = ["ort/vitis"]
 rknpu = ["ort/rknpu"]
+
+#[lints.clippy]
+#unwrap_used = "warn"

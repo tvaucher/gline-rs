@@ -1,4 +1,4 @@
-# About the ONNX models
+# GLiNER ONNX Models Properties
 
 ## Model Properties in Span Mode
 

@@ -32,7 +32,7 @@ fn main() -> Result<()> {
     let _output = model.inference(input)?;
     
     let inference_time = inference_start.elapsed();
-    println!("Inference took {} seconds on {} samples ({:.2} sec/sample)", inference_time.as_secs(), nb_samples, inference_time.as_secs() as f32 / nb_samples as f32);
+    println!("Inference took {} seconds on {} samples ({:.2} samples/sec)", inference_time.as_secs(), nb_samples, nb_samples as f32 / inference_time.as_secs() as f32);
 
     Ok(())
 }
