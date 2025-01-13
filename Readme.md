@@ -33,7 +33,7 @@ Include `gline-rs` as a regular dependency in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-"gline-rs" = "0.9.0"
+"gline-rs" = "0.9.1"
 ```
 
 The public API is self-explanatory:
@@ -142,23 +142,40 @@ This create mirrors the following `ort` features:
 
 ## ⏱️ Performances
 
+### CPU
+
 Comparing performances from one implementation to another is complicated, as they depend on many factors. But according to the first measures, it appears that `gline-rs` can run **4x faster** on CPU than the original implementation out of the box:
 
-| Implementation | Sequences/second |
+| Implementation | sequences/second |
 |----------------|------------------|
 | gline-rs       | 6.67             |
 | GLiNER.py      | 1.61             |
 
 Both implementations have been tested under the following configuration:
 
-* Inference mode: CPU 
 * Dataset: subset of the [NuNER](https://huggingface.co/datasets/numind/NuNER) dataset (first 100 entries)
-* Mode: token / flat_ner=true / multi_label=false
+* Mode: token, flat_ner: true, multi_label: false
 * Number of entity classes: 3
 * Threshold: 0.5
 * Model: [gliner-multitask-large-v0.5](https://huggingface.co/knowledgator/gliner-multitask-large-v0.5)
-* CPU specs: 2.3Ghz Intel Core i9 with 8 cores (12 threads)
+* CPU specs: Intel Core i9 @2.3Ghz with 8 cores (12 threads)
 
+### GPU
+
+Unsurprisingly, leveraging a GPU dramatically increases the throughput:
+
+| Implementation | sequences/second |
+|----------------|------------------|
+| gline-rs       | 248.75           |
+
+The configuration of the test is similar to the above, except:
+
+* Dataset: subset of the [NuNER](https://huggingface.co/datasets/numind/NuNER) dataset (first 1000 entries)
+* Execution provider: CUDA
+* GPU specs: NVIDIA RTX 4080 (16Gb VRAM)
+* CPU specs: Intel Core i7 13700KF @3.4Ghz 
+
+(Comparison with the original implementation has yet to be done.)
 
 ## 🧪 Current Status
 
