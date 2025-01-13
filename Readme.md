@@ -166,6 +166,8 @@ Both implementations have been tested under the following configuration:
 
 For any critical use, it is advisable to wait until it has been extensively tested and `ort-2.0` (the ONNX runtime wrapper) has reached a stable release.
 
+Version *0.9.1* is on the way, with options for GPU inferencing.
+
 The first stable, production-grade release will be labeled **1.0.0**.
 
 
