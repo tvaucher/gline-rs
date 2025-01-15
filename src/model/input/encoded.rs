@@ -30,7 +30,7 @@ impl EncodedInput {
     pub fn from(input: PromptInput, tokenizer: &impl Tokenizer) -> Result<Self> {        
         // prepare the result vector
         let mut encodings: Vec<EncodedPrompt> = Vec::with_capacity(input.prompts.len());
-        // maximum token of sub-word tokens found in one prompt (will be the width of the input tensor)
+        // maximum number of sub-word tokens found in one prompt (will be the width of the input tensor)
         let mut max_tokens: usize = 0;
         // process each prompt
         for prompt in &input.prompts {
