@@ -1,5 +1,5 @@
 use crate::util::result::Result;
-use crate::{text::{prompt::Prompt, token::Token, tokenizer::Tokenizer}, util::compose::Composable};
+use crate::{text::{token::Token, tokenizer::Tokenizer}, util::compose::Composable};
 use super::prompt::PromptInput;
 use ndarray::{Array, Array2, ArrayView};
 
@@ -17,9 +17,11 @@ pub struct EncodedInput {
 }
 
 /// Utility struct
-struct EncodedPrompt<'a> {
-    prompt: &'a Prompt,
+struct EncodedPrompt {
+    /// encodings of each word
     encoding: Vec<Vec<u32>>,
+    /// offset of the first token of the actual text (beside entity labels)
+    text_offset: usize,
 }
 
 impl EncodedInput {
@@ -36,16 +38,24 @@ impl EncodedInput {
         for prompt in &input.prompts {
             // resulting sequence of encodings for each word of the current prompt
             let mut prompt_tokens: Vec<Vec<u32>> = Vec::with_capacity(prompt.tokens().len());
-            // total number of sub-word tokens for the current prompt (add initial and terminal tokens)
+            // total number of sub-word tokens for the current prompt (adding 2 for initial and terminal tokens)
             let mut total_tokens: usize = 2;
+            // number of sub-word tokens for the entities part only (before the actual text)
+            let mut total_entity_tokens = 0;
             // encode each token of the current prompt
-            for word in prompt.tokens() {
+            for (pos, word) in prompt.tokens().iter().enumerate() {
+                // actually encode the word
                 let encoding = tokenizer.encode(word)?;
+                // increment the number of sub-word tokens accordingly
                 total_tokens += encoding.len();
+                // increment the number of sub-word tokens in the entity part (will be used to start the word masks at the right place)
+                if pos <= prompt.entities_len() {
+                    total_entity_tokens += encoding.len();
+                }
                 prompt_tokens.push(encoding);
             }
-            // update global result: encodings and max_tokens
-            encodings.push(EncodedPrompt { prompt, encoding: prompt_tokens });
+            // update global result: push encoded prompt and update max_tokens
+            encodings.push(EncodedPrompt { encoding: prompt_tokens, text_offset: total_entity_tokens });
             max_tokens = std::cmp::max(max_tokens, total_tokens);
         }
 
@@ -73,13 +83,17 @@ impl EncodedInput {
             for word in encoding {
                 for token in word {
                     input_id[idx] = token as i64;
+                    // attention mask
                     attn_mask[idx] = 1;
-                    if idx > encoded_prompt.prompt.entities_len() {
+                    // word mask (only for non-label tokens)
+                    if idx >= encoded_prompt.text_offset {
                         word_mask[idx] = word_id;
                     }
+                    // update position
                     idx += 1;
                 }
-                if idx > encoded_prompt.prompt.entities_len() {
+                // increment word mask (if we are over the label tokens)
+                if idx >= encoded_prompt.text_offset {
                     word_id += 1;
                 }
             }
@@ -197,6 +211,32 @@ mod tests {
             println!("Attn Masks: {:?}", encoded.attention_masks);
             println!("Word masks: {:?}", encoded.word_masks);
         }
+        Ok(())
+    }
+
+    #[test]
+    fn test_multiword_entity_label() -> Result<()> {
+        let splitter = crate::text::splitter::RegexSplitter::default();
+        let tokenizer = crate::text::tokenizer::HFTokenizer::from_file("models/gliner_small-v2.1/tokenizer.json")?;
+        let batch = [ "this is a test"];
+        let entities = [ "multi label" ];
+        let input = super::super::text::TextInput::from_str(&batch, &entities)?;
+        let tokenized = super::super::tokenized::TokenizedInput::from(input, &splitter, None)?;
+        let prepared = PromptInput::from(tokenized);
+        let encoded = EncodedInput::from(prepared, &tokenizer)?;
+        // Some prints
+        if false {
+            println!("### {:?}", encoded.num_tokens);
+            println!("Tokens: {:?}", encoded.input_ids);
+            println!("Attn Masks: {:?}", encoded.attention_masks);
+            println!("Word masks: {:?}", encoded.word_masks);
+        }
+        // Assertions
+        let ids = encoded.input_ids.row(0);
+        assert_eq!(ids.len(), 10);
+        let word_masks = encoded.word_masks.row(0);
+        assert_eq!(word_masks.to_vec(), vec![0, 0, 0, 0, 0, 1, 2, 3, 4, 0]);
+        // Everything rules
         Ok(())
     }
 
