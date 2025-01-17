@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Support for multi-word labels (issue #1)
 
+### Added
+
+- Matrix-level documentation of pre- and post-processing steps (see `doc/Processing.typ` or `doc/Processing.pdf`)
+- More unit tests
+
+
 ## [0.9.1] - 2025-01-13
 
 ### Added
@@ -19,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Minor source code linting and documentation refactoring
+
 
 ## [0.9.0] - 2025-01-07
 
