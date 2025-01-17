@@ -7,7 +7,7 @@ use super::tokenized::TokenizedInput;
 /// 
 /// Output form: 
 /// ```text
-/// [<<ENT>>, type1, <<ENT>>, type2, ..., <<ENT>>, typeN, <<SEP>>]
+/// [<<ENT>>, type1, <<ENT>>, type2, ..., <<ENT>>, typeK, <<SEP>>, token1, token2, ..., tokenN]
 /// ```
 pub struct PromptInput {
     /// Texts (moved from input)

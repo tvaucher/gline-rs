@@ -124,3 +124,54 @@ impl<'a> Composable<SpanTensors<'a>, (SessionInputs<'a, 'a>, TensorsMeta)> for T
         Ok((input.tensors, input.meta))
     }
 }
+
+
+/// Unit tests
+#[cfg(test)]
+mod tests {
+    use ort::session::SessionInputValue;
+    use super::*;
+
+    #[test]
+    fn test() -> Result<()> {        
+        // Silent some clippy warnings for unit tests
+        #![allow(clippy::get_first)]
+        #![allow(clippy::unwrap_used)]
+        // Processing
+        let splitter = crate::text::splitter::RegexSplitter::default();        
+        let tokenizer = crate::text::tokenizer::HFTokenizer::from_file(std::path::Path::new("models/gliner_small-v2.1/tokenizer.json"))?;
+        let batch = [ "My name is James Bond", "I like to drive my Aston Martin"];
+        let entities = [ "movie character", "vehicle" ];
+        let input = super::super::super::text::TextInput::from_str(&batch, &entities)?;
+        let tokenized = super::super::super::tokenized::TokenizedInput::from(input, &splitter, None)?;
+        let prepared = super::super::super::prompt::PromptInput::from(tokenized);
+        let encoded = EncodedInput::from(prepared, &tokenizer)?;
+        let spans = SpanTensors::from(encoded, 12)?;
+        let span_idx = get_tensor("span_idx", &spans.tensors)?;
+        let span_idx = span_idx.try_extract_tensor::<i64>()?;        
+        let span_masks = get_tensor("span_mask", &spans.tensors)?;
+        let span_masks = span_masks.try_extract_tensor::<bool>()?;        
+        // Some prints
+        if false {
+            println!("Spans: {:?}", &span_idx);
+            println!("Spans Masks: {:?}", &span_masks);
+        }
+        // Assertions (TODO: add more)
+        assert_eq!(span_idx.shape(), vec![2, 84, 2]);
+        assert_eq!(span_masks.shape(), vec![2, 84]);
+        // Everything rules
+        Ok(())
+    }
+
+    fn get_tensor<'a>(key: &str, si: &'a SessionInputs<'a, 'a>) -> Result<&'a SessionInputValue<'a>> {
+        if let SessionInputs::ValueMap(map) = si {
+            for (k, v) in map {
+                if k.eq(key) {
+                    return Ok(v);
+                }
+            }
+        }
+        Err("cannot extract expected tensor".into())
+    }
+
+}

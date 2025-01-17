@@ -199,18 +199,38 @@ mod tests {
     fn test2() -> Result<()> {        
         let splitter = crate::text::splitter::RegexSplitter::default();        
         let tokenizer = crate::text::tokenizer::HFTokenizer::from_file(std::path::Path::new("models/gliner_small-v2.1/tokenizer.json"))?;
-        let batch = [ "Paris is the capital of France. My name is Frédérik."];
-        let entities = [ "city", "country", "person" ];
+        let batch = [ "My name is James Bond", "I like to drive my Aston Martin"];
+        let entities = [ "movie character", "vehicle" ];
         let input = super::super::text::TextInput::from_str(&batch, &entities)?;
         let tokenized = super::super::tokenized::TokenizedInput::from(input, &splitter, None)?;
         let prepared = PromptInput::from(tokenized);
         let encoded = EncodedInput::from(prepared, &tokenizer)?;
+        // Some prints
         if false {
             println!("### {:?}", encoded.num_tokens);
             println!("Tokens: {:?}", encoded.input_ids);
             println!("Attn Masks: {:?}", encoded.attention_masks);
             println!("Word masks: {:?}", encoded.word_masks);
+            println!("Text length: {:?}", encoded.text_lengths);
         }
+        // Assertions on first sequence
+        let ids1 = encoded.input_ids.row(0);
+        let attn1 = encoded.attention_masks.row(0);
+        let word1 = encoded.word_masks.row(0);
+        let len1 = encoded.text_lengths.row(0);        
+        assert_eq!(ids1.to_vec(), vec![1, 128002, 1421, 1470, 128002, 1508, 128003, 573, 601, 269, 1749, 8728, 2, 0, 0]);
+        assert_eq!(attn1.to_vec(), vec![1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]);
+        assert_eq!(word1.to_vec(), vec![0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 0, 0, 0]);
+        assert_eq!(len1.to_vec(), vec![5]);
+        // Assertions on second sequence
+        let ids2 = encoded.input_ids.row(1);
+        let attn2 = encoded.attention_masks.row(1);
+        let word2 = encoded.word_masks.row(1);
+        let len2 = encoded.text_lengths.row(1);
+        assert_eq!(ids2.to_vec(), vec![1, 128002, 1421, 1470, 128002, 1508, 128003, 273, 334, 264, 1168, 312, 20844, 2963, 2]);
+        assert_eq!(attn2.to_vec(), vec![1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+        assert_eq!(word2.to_vec(), vec![0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0]);
+        assert_eq!(len2.to_vec(), vec![7]);
         Ok(())
     }
 
