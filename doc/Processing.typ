@@ -138,7 +138,7 @@ $))
 
 === Transformation
 
-#align(left, block($P -> (I, M, W, L)$))
+#align(left, block($P -> (I, A, W, L)$))
 
 === Source Code
 
@@ -168,11 +168,11 @@ $))
 
 #align(left, block(
 $
-M = mat(
-  "mask"_"1,1", "mask"_"1,2", dots, "mask"_"1,k" ;
-  "mask"_"2,1", "mask"_"2,2", dots, "mask"_"2,k" ;
+A = mat(
+  "attn_mask"_"1,1", "attn_mask"_"1,2", dots, "attn_mask"_"1,k" ;
+  "attn_mask"_"2,1", "attn_mask"_"2,2", dots, "attn_mask"_"2,k" ;
   dots.v, dots.v, dots.down, dots.v ;
-  "mask"_"n,1", "mask"_"n,2", dots, "mask"_"n,k" ;  
+  "attn_mask"_"n,1", "attn_mask"_"n,2", dots, "attn_mask"_"n,k" ;  
 )
 $))
 
@@ -203,7 +203,7 @@ I = mat(
 $))
 
 #align(left, block($
-M = mat(
+A = mat(
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0;
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
 )
@@ -232,7 +232,7 @@ Downstream of the aforementioned steps.
 
 === Transformation
 
-#align(left, block($(I, M, W, L) -> (I, M, W, L, S_I, S_M)$))
+#align(left, block($(I, A, W, L) -> (I, A, W, L, S_I, S_M)$))
 
 === Format
 
@@ -311,6 +311,7 @@ S_M = mat(
 )
 $))
 
+#pagebreak()
 = Pre-Processing (Token Mode)
 
 Nothing more to be done beside the common steps.
