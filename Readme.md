@@ -203,6 +203,7 @@ Default configurations are provided, but it should be easy to adapt them:
 * Others traits like `Splitter` or `Tokenizer` can be easily leveraged to test with different implementations of the text-processing steps.
 * While there is always room for improvement, special care has been taken to craft idiomatic, generic, commented, and efficient code.
 
+A matrix-level documentation of the processing pipelines is provided in `doc/Processing.[pdf,typ]`.
 
 ## 📖 References and Acknowledgments
 
