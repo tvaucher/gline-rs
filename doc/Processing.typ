@@ -1,17 +1,26 @@
+#set heading(numbering: "1.")
+#show link: underline
+
 #place(
   top + center, float: true, scope: "parent",
-  text(1.8em, weight: "bold")[Matrix-Level Documentation of Processing Steps]  
+  text(1.8em, weight: "bold")[Matrix-Level Documentation of \ `gline-rs` Processing Steps]  
 )
 
 #place(
   top + center, float: true, scope: "parent",
-  text[WORK IN PROGRESS]  
+  text[Frédérik Bilhaut]
 )
 
-This documents aims at describing precisely the pipeline of matrix transformations needed for inferencing, as implemented `gline-rs`. 
+#v(20pt)
 
+This documents aims at providing a matrix-level description of the pipeline needed for GLiNER inferences, as implemented by #link("https://github.com/fbilhaut/gline-rs")[`gline-rs`].
 
+Concrete examples are provided for each step, all of which build on the input given in the first one.
 
+#v(20pt)
+#outline(depth: 2)
+
+#pagebreak()
 = Pre-Processing (Common)
 
 == Text Input
@@ -318,12 +327,16 @@ $))
 #pagebreak()
 = Pre-Processing (Token Mode)
 
-Nothing more to be done beside the common steps.
+Nothing to be done beside the common steps.
 
 #pagebreak()
 = Post-Processing (Span Mode)
 
 == Logits Output
+
+=== Source Code
+
+- Struct: `gliner::model::output::TensorOutput`
 
 === Format
 
@@ -369,13 +382,11 @@ $))
 
 === Example
 
-In this case $s=12$.
-
-For readability purposes, the raw values are "sigmoided" ($S(x)= 1/(1+e^(-x))$) and then "zeroed" if they are epsilon. 
+In this case $s=12$. For readability purposes, the raw values are "sigmoided" ($S(x)= 1/(1+e^(-x))$) and then "ReLUed" with a threshold $t=0.5$.
 
 
 #align(left, block($
-S_epsilon (O) = mat(
+O_"S,t" = mat(
   mat(
       mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
       mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
@@ -398,12 +409,167 @@ S_epsilon (O) = mat(
 $))
 
 Which means:
-- In the first sequence, the span starting with the fourth token and ending one token after has a probability of 0.89 to match the first entity class.
-- In the first sequence, the span starting with the sixth token and ending one token after has a probability of 0.96 to match the second entity class.
+- In the 1st sequence, the span starting with the 4th token and ending with the 5th one has a probability of 0.89 to match the 1st entity class.
+- In the 2nd sequence, the span starting with the 6th token and ending with the 7th one has a probability of 0.96 to match the second 2nd class.
+
+#pagebreak()
+== Span Decoding
+
+=== Transformation
+
+$(O, L) -> S$
+
+=== Source Code
+
+- Struct: `gliner::model::output::decoded::SpanOutput`
+- Transformation: `gliner::model::output::decoded::span::TensorsToDecoded`
+
+=== Format
+
+- $t$: threshold
+- $n$: number of input sequences
+- $L$: text lengths as defined before
+- $S$: sequence of spans $(i,j,k,p)$ where: 
+  - $i$ is the index of the first token of sequence $m$ with $i<j$ and $i<L(m)$ 
+  - $j$ is the index of the last token with the same constraints as $i$
+  - $k$ is the entity class, 
+  - $p$ is the probability for class $k$ with $p>=t$
+
+#align(left, block($ 
+S =
+  mat(delim: "[",
+    mat(delim: "[", (i_"1,1", j_"1,1", k_"1,1", p_"1,1"), (i_"1,2", j_"1,2", k_"1,2", p_"1,2"), dots);
+    dots.v;
+    mat(delim: "[", (i_"n,1", j_"n,1", k_"n,1", p_"n,1"), (i_"n,2", j_"n,2", k_"n,2", p_"n,2"), dots);
+)
+$))
+
+=== Example
+
+#align(left, block($ 
+S =
+  mat(delim: "[",
+    mat(delim: "[", (4, 5, 1, 0.89));
+    mat(delim: "[", (6, 7, 2, 0.96));
+)
+$))
 
 #pagebreak()
 = Post-Processing (Token Mode)
 
-TODO
+== Logits Output
 
+=== Source Code
+
+- Struct: `gliner::model::output::TensorOutput`
+
+=== Format
+
+
+- $n$: number of text sequences
+- $w$: maximum number of tokens in one sequence
+- $k$: number of entity labels
+- $O$: logits output, of type `f32` and shape $(3*n*w*k)$ with:
+  - $s_"n,w,k"$: raw model output for a start token $w$ in sequence $n$ and label $k$.
+  - $e_"n,w,k"$: raw model output for an end token $w$ in sequence $n$ and label $k$.
+  - $i_"n,w,k"$: raw model output for an inside token $w$ in sequence $n$ and label $k$.
+
+#align(left, block($
+O = mat(
+  mat(
+    mat(
+      "s"_"1,1,1", dots, "s"_"1,1,k";
+      dots.v, dots.down, dots.v;
+      "s"_"1,w,1", dots, "s"_"1,w,k";
+    ), 
+    dots,
+    mat(
+      "s"_"n,1,1", dots, "s"_"n,1,k";
+      dots.v, dots.down, dots.v;
+      "s"_"n,w,1", dots, "s"_"n,w,k";
+    ), 
+  );
+  mat(
+    mat(
+      "e"_"1,1,1", dots, "e"_"1,1,k";
+      dots.v, dots.down, dots.v;
+      "e"_"1,w,1", dots, "e"_"1,w,k";
+    ), 
+    dots,
+    mat(
+      "e"_"n,1,1", dots, "e"_"n,1,k";
+      dots.v, dots.down, dots.v;
+      "e"_"n,w,1", dots, "e"_"n,w,k";
+    ), 
+  );
+  mat(
+    mat(
+      "i"_"1,1,1", dots, "i"_"1,1,k";
+      dots.v, dots.down, dots.v;
+      "i"_"1,w,1", dots, "i"_"1,w,k";
+    ), 
+    dots,
+    mat(
+      "i"_"n,1,1", dots, "i"_"n,1,k";
+      dots.v, dots.down, dots.v;
+      "i"_"n,w,1", dots, "i"_"n,w,k";
+    ), 
+  );
+)
+$))
+
+=== Example
+
+For readability purposes, the raw values are "sigmoided" ($S(x)= 1/(1+e^(-x))$) and then "ReLUed" with a threshold $t=0.5$.
+
+#align(left, block($
+O_"S,t" = mat(
+  mat(
+    mat(0, 0; 0, 0; 0, 0; bold(0.97), 0; 0, 0; 0, 0; 0, 0),
+    mat(0, 0; 0, 0; 0, 0; 0, 0; 0, 0; 0, bold(0.99); 0, 0), 
+  );
+  mat(
+    mat(0, 0; 0, 0; 0, 0; 0, 0; bold(0.96), 0; 0, 0; 0, 0),
+    mat(0, 0; 0, 0; 0, 0; 0, 0; 0, 0; 0, 0; 0, bold(0.97)),
+  );
+  mat(
+    mat(0, 0; 0, 0; 0, 0; bold(0.98), 0; bold(0.98), 0; 0, 0; 0, 0),
+    mat(0, 0; 0, 0; 0, 0; 0, 0; 0, 0; 0, bold(0.99); 0, bold(0.99)),
+  );
+)
+$))
+
+#pagebreak()
+== Span Decoding
+
+=== Transformation
+
+$O -> S$
+
+=== Source Code
+
+- Struct: `gliner::model::output::decoded::SpanOutput`
+- Transformation: `gliner::model::output::decoded::token::TensorsToDecoded`
+
+=== Format
+
+Same format as in span-mode.
+
+#pagebreak()
+= Post-Processing (Common)
+
+== Span Filtering (Greedy Search)
+
+=== Transformation
+
+$S -> S'$
+
+=== Source Code
+
+- Struct: `gliner::model::output::decoded::SpanOutput`
+- Transformation: `gliner::model::output::decoded::greedy::GreedySearch`
+
+=== Format
+
+Same as span output.
 
