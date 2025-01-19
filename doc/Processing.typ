@@ -8,6 +8,10 @@
   text[WORK IN PROGRESS]  
 )
 
+This documents aims at describing precisely the pipeline of matrix transformations needed for inferencing, as implemented `gline-rs`. 
+
+
+
 = Pre-Processing (Common)
 
 == Text Input
@@ -319,7 +323,83 @@ Nothing more to be done beside the common steps.
 #pagebreak()
 = Post-Processing (Span Mode)
 
-TODO
+== Logits Output
+
+=== Format
+
+- $n$: number of text sequences
+- $w$: maximum number of tokens in one sequence
+- $s$: maximum number of possible spans for one token (seee above)
+- $k$: number of entity labels
+- $O$: logits output, of type `f32` and shape $(n*w*s*k)$
+- $v_"n,w,s,k"$: raw model output for sequence $n$, token $w$, span $s$ and label $k$.
+
+#align(left, block($
+O = mat(
+  mat(
+    mat(
+      mat("v"_"1,1,1,1", dots, "v"_"1,1,1,k");
+      dots.v;
+      mat("v"_"1,1,s,1", dots, "v"_"1,1,s,k");
+    ), 
+    dots,
+    mat(
+      mat("v"_"1,w,1,1", dots, "v"_"1,w,1,k");
+      dots.v;
+      mat("v"_"1,w,s,1", dots, "v"_"1,w,s,k");
+    )
+  );
+  dots.v;
+  mat(
+    mat(
+      mat("v"_"n,1,1,1", dots, "v"_"n,1,1,k");
+      dots.v;
+      mat("v"_"n,1,s,1", dots, "v"_"n,1,s,k");
+    ), 
+    dots,
+    mat(
+      mat("v"_"n,w,1,1", dots, "v"_"n,w,1,k");
+      dots.v;
+      mat("v"_"n,w,s,1", dots, "v"_"n,w,s,k");
+    )
+  )
+)
+$))
+
+
+=== Example
+
+In this case $s=12$.
+
+For readability purposes, the raw values are "sigmoided" ($S(x)= 1/(1+e^(-x))$) and then "zeroed" if they are epsilon. 
+
+
+#align(left, block($
+S_epsilon (O) = mat(
+  mat(
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(bold(0.89), 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);      
+  );
+  mat(
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);      
+      mat(0, 0), mat(0, bold(0.96)), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);
+      mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0), mat(0, 0);      
+  );
+)
+$))
+
+Which means:
+- In the first sequence, the span starting with the fourth token and ending one token after has a probability of 0.89 to match the first entity class.
+- In the first sequence, the span starting with the sixth token and ending one token after has a probability of 0.96 to match the second entity class.
 
 #pagebreak()
 = Post-Processing (Token Mode)
