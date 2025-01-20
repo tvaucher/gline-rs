@@ -88,6 +88,6 @@ impl TensorsToDecoded {
 impl<'a> Composable<TensorOutput<'a>, SpanOutput> for TensorsToDecoded {
     fn apply(&self, input: TensorOutput) -> Result<SpanOutput> {        
         let decoded = self.decode(&input)?;
-        Ok(SpanOutput::new(decoded))
+        Ok(SpanOutput::new(input.meta.texts, input.meta.entities, decoded))
     }
 }

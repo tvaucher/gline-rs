@@ -72,6 +72,6 @@ impl Composable<SpanOutput, SpanOutput> for GreedySearch {
             .iter()
             .map(|s| Self::search(s, self.flat_ner, self.multi_label))
             .collect();
-        Ok(SpanOutput::new(spans))
+        Ok(SpanOutput::new(input.texts, input.entities, spans))
     }
 }
