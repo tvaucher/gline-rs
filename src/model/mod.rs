@@ -10,8 +10,6 @@ use super::util::compose::Composable;
 use crate::util::result::Result;
 use pipeline::Pipeline;
 use params::Parameters;
-use input::text::TextInput;
-use output::decoded::SpanOutput;
 use inference::Model;
 
 
@@ -23,8 +21,9 @@ pub struct GLiNER<T> {
 }
 
 
-impl<'a, T: Pipeline<'a>> GLiNER<T> {
-    pub fn inference(&'a self, input: TextInput) -> Result<SpanOutput> {        
+impl<'a, T: Pipeline<'a>> GLiNER<T> {    
+
+    pub fn inference(&'a self, input: T::Input) -> Result<T::Output> {
         // pre-process
         let (input, meta) = self.pipeline.pre_processor(&self.params).apply(input)?;
         // inference

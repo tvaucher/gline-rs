@@ -8,12 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Support for multi-word labels (issue #1)
+- Support for multi-word labels (issue [#1](https://github.com/fbilhaut/gline-rs/issues/1))
 
 ### Added
 
 - Matrix-level documentation of pre- and post-processing steps (see `doc/Processing.typ` or `doc/Processing.pdf`)
 - More unit tests
+
+### Changed
+
+- Make the `Pipeline` trait fully generic wrt. input and output types
 
 
 ## [0.9.1] - 2025-01-13

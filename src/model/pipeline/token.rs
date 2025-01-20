@@ -16,7 +16,10 @@ pub struct TokenPipeline<S, T> {
 }
 
 impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for TokenPipeline<S, T> {
-    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a> {
+    type Input = TextInput;
+    type Output = SpanOutput;
+
+    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, TextInput> {
         composed![
             input::tokenized::RawToTokenized::new(&self.splitter, params.max_length),
             input::prompt::TokenizedToPrompt::default(),
@@ -26,7 +29,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for TokenPipeline<S, T> {
         ]
     }
 
-    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a> {
+    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, SpanOutput> {
         composed![
             output::tensors::SessionOutputToTensors::default(),            
             output::decoded::token::TensorsToDecoded::new(params.threshold),
@@ -53,10 +56,10 @@ pub type TokenMode = TokenPipeline<crate::text::splitter::RegexSplitter, crate::
 /// Specific GLiNER implementation using the default token-mode pipeline
 impl super::super::GLiNER<TokenMode> {
     pub fn new<P: AsRef<Path>>(params: Parameters, runtime_params: RuntimeParameters, tokenizer_path: P, model_path: P) -> Result<Self> {
-        Ok(Self {            
+        Ok(Self {
+            params, 
             model: super::super::Model::new(model_path, runtime_params)?,
             pipeline: TokenPipeline::new(tokenizer_path)?,
-            params,
         })
     }
 }

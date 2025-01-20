@@ -16,7 +16,10 @@ pub struct SpanPipeline<S, T> {
 }
 
 impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for SpanPipeline<S, T> {
-    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a> {
+    type Input = TextInput;
+    type Output = SpanOutput;
+
+    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, TextInput>{
         composed![
             input::tokenized::RawToTokenized::new(&self.splitter, params.max_length),
             input::prompt::TokenizedToPrompt::default(),
@@ -26,7 +29,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for SpanPipeline<S, T> {
         ]
     }
 
-    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a> {
+    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, SpanOutput> {
         composed![
             output::tensors::SessionOutputToTensors::default(),
             output::decoded::span::TensorsToDecoded::new(params.threshold, params.max_width),            
