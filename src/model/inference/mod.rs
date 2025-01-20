@@ -3,10 +3,13 @@
 use std::path::Path;
 use ort::session::{SessionInputs, SessionOutputs};
 use ort::session::{builder::GraphOptimizationLevel, Session};
+use crate::util::compose::Composable;
 use crate::util::result::Result;
-use super::params::RuntimeParameters;
+use super::params::{Parameters, RuntimeParameters};
+use super::pipeline::Pipeline;
 
-/// Non-transparent wrapper around an `ort` session
+
+/// A `Model` can load an ONNX model, and run it using the provided pipeline.
 pub struct Model {    
     session: Session,
 }
@@ -23,11 +26,24 @@ impl Model {
         Ok(Self {
             session,
         })
+    }    
+
+    
+    pub fn inference<'a, P: Pipeline<'a>>(&'a self, input: P::Input, pipeline: &P, params: &Parameters) -> Result<P::Output> {
+        // pre-process
+        let (input, meta) = pipeline.pre_processor(params).apply(input)?;
+        // inference
+        let output = self.run(input)?;                
+        // post-process
+        let output = pipeline.post_processor(params).apply((output, meta))?;        
+        // ok
+        Ok(output)
     }
 
 
-    pub fn inference(&self, input: SessionInputs<'_, '_>) -> Result<SessionOutputs<'_, '_>> {
+    fn run(&self, input: SessionInputs<'_, '_>) -> Result<SessionOutputs<'_, '_>> {
         Ok(self.session.run(input)?)
     }
+
 
 }

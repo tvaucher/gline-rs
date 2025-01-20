@@ -1,4 +1,4 @@
-//! Everything about pre-/post-processing and inferencing
+//! The core of `gline-rs`: everything about pre-/post-processing, and inferencing
 
 pub mod params;
 pub mod pipeline;
@@ -6,31 +6,24 @@ pub mod input;
 pub mod output;
 pub mod inference;
 
-use super::util::compose::Composable;
 use crate::util::result::Result;
 use pipeline::Pipeline;
 use params::Parameters;
 use inference::Model;
 
 
-/// Generic GLiNER, to be parametrized by a specific pipeline (see implementations within the pipeline module)
-pub struct GLiNER<T> {
+/// Basic GLiNER, to be parametrized by a specific pipeline (see implementations within the pipeline module)
+/// 
+/// This is just a convenience wrapper around a `Model`, a `Pipeline`, and some `Parameters`.
+pub struct GLiNER<P> {
     params: Parameters,
     model: Model,
-    pipeline: T,
+    pipeline: P,
 }
 
 
-impl<'a, T: Pipeline<'a>> GLiNER<T> {    
-
-    pub fn inference(&'a self, input: T::Input) -> Result<T::Output> {
-        // pre-process
-        let (input, meta) = self.pipeline.pre_processor(&self.params).apply(input)?;
-        // inference
-        let output = self.model.inference(input)?;                
-        // post-process
-        let output = self.pipeline.post_processor(&self.params).apply((output, meta))?;        
-        // ok
-        Ok(output)
+impl<'a, P: Pipeline<'a>> GLiNER<P> {
+    pub fn inference(&'a self, input: P::Input) -> Result<P::Output> {
+        self.model.inference(input, &self.pipeline, &self.params)
     }
 }
