@@ -13,13 +13,13 @@ use super::*;
 /// Relation Extraction pipeline
 /// 
 /// Re-uses the token-level pipeline (see `TokenPipline`)
-pub struct RelationPipeline<S, T> {
+pub struct RelationPipeline<'a, S, T> {
     token_pipeline: TokenPipeline<S, T>,
-    relation_schema: RelationSchema,
+    relation_schema: &'a RelationSchema,
 }
 
 
-impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<S, T> {
+impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
     type Input = SpanOutput;
     type Output = RelationOutput;
 
@@ -39,8 +39,8 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<S, T> {
     }
 }
 
-impl<S, T> RelationPipeline<S, T> {
-    pub fn new(token_pipeline: TokenPipeline<S, T>, relation_schema: RelationSchema) -> Self {
+impl<'a, S, T> RelationPipeline<'a, S, T> {
+    pub fn new(token_pipeline: TokenPipeline<S, T>, relation_schema: &'a RelationSchema) -> Self {
         Self {
             token_pipeline,
             relation_schema,
@@ -49,8 +49,8 @@ impl<S, T> RelationPipeline<S, T> {
 }
 
 /// Builds a default relation extraction pipeline
-impl RelationPipeline<crate::text::splitter::RegexSplitter, crate::text::tokenizer::HFTokenizer> {
-    pub fn default<P: AsRef<Path>>(tokenizer_path: P, relation_schema: RelationSchema) -> Result<Self> {
+impl<'a> RelationPipeline<'a, crate::text::splitter::RegexSplitter, crate::text::tokenizer::HFTokenizer> {
+    pub fn default<P: AsRef<Path>>(tokenizer_path: P, relation_schema: &'a RelationSchema) -> Result<Self> {
         Ok(RelationPipeline::new(TokenPipeline::new(tokenizer_path)?, relation_schema))
     }
 }

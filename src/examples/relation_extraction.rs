@@ -37,7 +37,7 @@ fn main() -> Result<()> {
     // load two pipelines: one for NER, and one for Relation Extraction
     let params = Parameters::default();
     let ner_pipeline = TokenPipeline::new(TOKENIZER_PATH)?;
-    let rel_pipeline = RelationPipeline::default(TOKENIZER_PATH, relation_schema)?;
+    let rel_pipeline = RelationPipeline::default(TOKENIZER_PATH, &relation_schema)?;
 
     // first, perform entity extraction using the NER pipeline
     println!("Inferencing (NER)...");
