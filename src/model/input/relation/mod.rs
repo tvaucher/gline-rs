@@ -1,6 +1,6 @@
 pub mod schema;
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use crate::util::result::Result;
 use crate::{model::output::decoded::SpanOutput, util::compose::Composable};
 use schema::RelationSchema;
@@ -12,6 +12,7 @@ const PROMPT_PREFIX: &str = "Extract relationships between entities from the tex
 pub struct RelationInput {
     pub prompts: Vec<String>,
     pub labels: Vec<String>,
+    pub entity_labels: HashMap<String, HashSet<String>>,
 }
 
 impl RelationInput {
@@ -21,6 +22,7 @@ impl RelationInput {
         Self {
             prompts: Self::make_prompts(&spans, PROMPT_PREFIX),
             labels: Self::make_labels(&spans, schema),
+            entity_labels: Self::make_entity_labels(&spans),
         }
     }
     
@@ -53,6 +55,22 @@ impl RelationInput {
         }
 
         result
+    }
+    
+    /// Build entity-text -> entity-labels map (which will be used when decoding, to filter relations basing on allowed objects).
+    /// 
+    /// Multiple labels for the same entity text is supported, but in this case there is no guarantee that a 
+    /// relation actually mentions an entity as having a given label since we just have this information 
+    /// (limitation of GLiNER multi). So, as soon as one expected class is found for an entity, it will have
+    /// to be accepted without knowing its actual class within the relation (which is probably ok).
+    fn make_entity_labels(spans: &SpanOutput) -> HashMap<String, HashSet<String>> {        
+        let mut entity_labels = HashMap::<String, HashSet<String>>::new();
+        for seq in &spans.spans {
+            for span in seq {
+                entity_labels.entry(span.text().to_string()).or_insert(HashSet::new()).insert(span.class().to_string());
+            }
+        }
+        entity_labels
     }
 
 }
