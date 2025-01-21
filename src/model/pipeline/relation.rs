@@ -22,8 +22,9 @@ pub struct RelationPipeline<'a, S, T> {
 impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
     type Input = SpanOutput;
     type Output = RelationOutput;
+    type Context = TensorsMeta;
 
-    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input> {
+    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context> {
         composed![
             SpanOutputToRelationInput::new(&self.relation_schema),
             RelationInputToTextInput::default(),
@@ -31,7 +32,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
         ]        
     }
 
-    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output> {
+    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context> {
         composed![
             self.token_pipeline.post_processor(params),
             SpanOutputToRelationOutput::new(&self.relation_schema)

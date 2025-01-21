@@ -13,21 +13,22 @@ use super::{input::text::TextInput, output::decoded::SpanOutput, params::Paramet
 
 
 /// Defines a generic pre-processor
-pub trait PreProcessor<'a, I>: Composable<I, (SessionInputs<'a, 'a>, TensorsMeta)> { }
-impl<'a, I, T: Composable<I, (SessionInputs<'a, 'a>, TensorsMeta)>> PreProcessor<'a, I> for T { }
+pub trait PreProcessor<'a, I, C>: Composable<I, (SessionInputs<'a, 'a>, C)> { }
+impl<'a, I, C, T: Composable<I, (SessionInputs<'a, 'a>, C)>> PreProcessor<'a, I, C> for T { }
 
 
 /// Defines a generic post-processor
-pub trait PostProcessor<'a, O>: Composable<(SessionOutputs<'a, 'a>, TensorsMeta), O> { }
-impl<'a, O, T: Composable<(SessionOutputs<'a, 'a>, TensorsMeta), O>> PostProcessor<'a, O> for T { }
+pub trait PostProcessor<'a, O, C>: Composable<(SessionOutputs<'a, 'a>, C), O> { }
+impl<'a, O, C, T: Composable<(SessionOutputs<'a, 'a>, C), O>> PostProcessor<'a, O, C> for T { }
 
 
 /// Defines a generic pipeline
 pub trait Pipeline<'a> {
     type Input;
     type Output;
-    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input>;
-    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output>;
+    type Context;
+    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context>;
+    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context>;
 }
 
 

@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - The `Model` struct is now opaque and parametrized by a pipeline which it handles by itself.
-- The `Pipeline` trait is now fully generic wrt. input and output types.
+- The `Pipeline` trait is now fully generic wrt. input, output and context types.
 - The `GLiNER` struct is now a light convenience wrapper around `Model`, `Pipeline` and `Parameters`.
 
 
