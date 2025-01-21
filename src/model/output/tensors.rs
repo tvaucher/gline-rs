@@ -2,7 +2,7 @@
 
 use ort::session::SessionOutputs;
 use crate::util::{result::Result, compose::Composable};
-use crate::model::pipeline::TensorsMeta;
+use crate::model::pipeline::context::TensorsMeta;
 
 /// Represents the raw tensor output of the inference step
 pub struct TensorOutput<'a> {

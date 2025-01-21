@@ -4,7 +4,7 @@ use std::iter;
 use crate::util::result::Result;
 use crate::model::output::tensors::TensorOutput;
 use crate::util::compose::Composable;
-use crate::{model::pipeline::TensorsMeta, text::span::Span};
+use crate::{model::pipeline::context::TensorsMeta, text::span::Span};
 use crate::util::math::sigmoid;
 use super::SpanOutput;
 

@@ -4,7 +4,7 @@ use crate::util::math::sigmoid;
 use crate::util::result::Result;
 use crate::util::compose::Composable;
 use crate::text::span::Span;
-use crate::model::pipeline::TensorsMeta;
+use crate::model::pipeline::context::TensorsMeta;
 use crate::model::output::tensors::TensorOutput;
 use super::SpanOutput;
 

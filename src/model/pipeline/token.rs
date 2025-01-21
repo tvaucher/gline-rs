@@ -7,6 +7,7 @@ use super::super::super::util::compose::{compose, composed};
 use super::super::params::{Parameters, RuntimeParameters};
 use super::super::{input, output};
 use super::*;
+use context::TensorsMeta;
 
 
 /// Generic token-level pipeline

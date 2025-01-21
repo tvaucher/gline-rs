@@ -2,7 +2,7 @@ use ort::session::SessionInputs;
 use crate::util::compose::Composable;
 use crate::util::result::Result;
 use super::super::encoded::EncodedInput;
-use super::super::super::pipeline::TensorsMeta;
+use super::super::super::pipeline::context::TensorsMeta;
 
 /// Ready-for-inference tensors (token mode)
 pub struct TokenTensors<'a> {

@@ -7,6 +7,7 @@ use crate::model::input::relation::{RelationInputToTextInput, SpanOutputToRelati
 use crate::model::output::relation::{RelationOutput, SpanOutputToRelationOutput};
 use crate::text::{splitter::Splitter, tokenizer::Tokenizer};
 use crate::util::compose::{compose, composed};
+use context::TensorsMeta;
 use super::super::params::Parameters;
 use super::*;
 
