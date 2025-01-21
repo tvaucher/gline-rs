@@ -12,12 +12,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Pipeline for Relation Extraction
 - Matrix-level documentation of pre- and post-processing steps (see `doc/Processing.typ` or `doc/Processing.pdf`)
 - More unit tests
 
 ### Changed
 
-- Make the `Pipeline` trait fully generic wrt. input and output types
+- The `Model` struct is now opaque and parametrized by a pipeline which it handles by itself.
+- The `Pipeline` trait is now fully generic wrt. input and output types.
+- The `GLiNER` struct is now a light convenience wrapper around `Model`, `Pipeline` and `Parameters`.
 
 
 ## [0.9.1] - 2025-01-13

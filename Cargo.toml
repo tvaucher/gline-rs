@@ -25,6 +25,10 @@ name = "span-mode"
 path = "src/examples/span_mode.rs"
 
 [[example]]
+name = "relation-extraction"
+path = "src/examples/relation_extraction.rs"
+
+[[example]]
 name = "benchmark-cpu"
 path = "src/examples/benchmark_cpu.rs"
 
