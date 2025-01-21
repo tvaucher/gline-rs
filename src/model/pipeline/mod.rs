@@ -2,6 +2,7 @@
 
 pub mod token;
 pub mod span;
+pub mod relation;
 
 use ort::session::{SessionInputs, SessionOutputs};
 use crate::util::{error::IndexError, result::Result};
