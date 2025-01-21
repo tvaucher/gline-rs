@@ -34,7 +34,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
     fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output> {
         composed![
             self.token_pipeline.post_processor(params),
-            SpanOutputToRelationOutput::default()
+            SpanOutputToRelationOutput::new(&self.relation_schema)
         ]
     }
 }

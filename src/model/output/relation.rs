@@ -1,3 +1,4 @@
+use crate::model::input::relation::schema::RelationSchema;
 use crate::util::compose::Composable;
 use crate::util::result::Result;
 use crate::text::span::Span;
@@ -7,7 +8,7 @@ use super::decoded::SpanOutput;
 pub struct RelationOutput {
     pub texts: Vec<String>,
     pub entities: Vec<String>,
-    pub relations: Vec<Vec<Relation>>,
+    pub relations: Vec<Vec<Relation>>,    
 }
 
 /// Defines an individual relation
@@ -81,10 +82,18 @@ impl Relation {
 }
 
 
-#[derive(Default)]
-pub struct SpanOutputToRelationOutput {}
+/// SpanOutput -> RelationOutput
+pub struct SpanOutputToRelationOutput<'a> {
+    _schema: &'a RelationSchema, // for later use
+}
 
-impl Composable<SpanOutput, RelationOutput> for SpanOutputToRelationOutput {
+impl<'a> SpanOutputToRelationOutput<'a> {
+    pub fn new(schema: &'a RelationSchema) -> Self {
+        Self { _schema: schema }
+    }
+}
+
+impl<'a> Composable<SpanOutput, RelationOutput> for SpanOutputToRelationOutput<'a> {
     fn apply(&self, input: SpanOutput) -> Result<RelationOutput> {
         let mut result = Vec::new();
         for seq in input.spans {
