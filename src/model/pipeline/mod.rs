@@ -4,6 +4,8 @@ pub mod token;
 pub mod span;
 pub mod relation;
 pub mod context;
+pub mod composable;
+
 
 use ort::session::{SessionInputs, SessionOutputs};
 use crate::util::result::Result;
@@ -26,6 +28,11 @@ pub trait Pipeline<'a> {
     type Input;
     type Output;
     type Context;
+    
     fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context>;
     fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context>;
+
+    fn to_composable(self, model: &'a super::Model, params: &'a Parameters) -> impl Composable<Self::Input, Self::Output> where Self: Sized {
+        composable::ComposablePipeline::new(self, model, params)
+    }
 }

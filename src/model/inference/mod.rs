@@ -1,4 +1,5 @@
 //! The inferencing part, leveraging the `ort` ONNX wrapper
+pub mod composable;
 
 use std::path::Path;
 use ort::session::{SessionInputs, SessionOutputs};
@@ -38,6 +39,10 @@ impl Model {
         let output = pipeline.post_processor(params).apply((output, meta))?;        
         // ok
         Ok(output)
+    }
+
+    pub fn to_composable<'a, P: Pipeline<'a>>(&'a self, pipeline: &'a P, params: &'a Parameters) -> impl Composable<P::Input, P::Output> {
+        composable::ComposableModel::new(self, pipeline, params)
     }
 
 
