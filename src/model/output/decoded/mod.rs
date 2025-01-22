@@ -23,3 +23,15 @@ impl SpanOutput {
         }
     }
 }
+
+
+impl std::fmt::Display for SpanOutput {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for spans in &self.spans {
+            for span in spans {
+                writeln!(f, "{:3} | {:15} | {:10} | {:.1}%", span.sequence(), span.text(), span.class(), span.probability() * 100.0)?;
+            }
+        }
+        Ok(())
+    }
+}

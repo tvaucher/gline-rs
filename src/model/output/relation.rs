@@ -82,6 +82,18 @@ impl Relation {
 }
 
 
+impl std::fmt::Display for RelationOutput {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for relations in &self.relations {
+            for relation in relations {
+                writeln!(f, "{:3} | {:15} | {:10} | {:15} | {:.1}%", relation.sequence(), relation.subject(), relation.class(), relation.object(), relation.probability() * 100.0)?;
+            }
+        }
+        Ok(())
+    }
+}
+
+
 /// SpanOutput -> RelationOutput
 pub struct SpanOutputToRelationOutput<'a> {
     _schema: &'a RelationSchema, // for later use
