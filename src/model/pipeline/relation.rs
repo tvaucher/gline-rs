@@ -1,15 +1,15 @@
 //! Pre-defined pipeline for Relation Extraction
 
 use std::path::Path;
-use super::token::TokenPipeline;
+use crate::text::{splitter::Splitter, tokenizer::Tokenizer};
+use crate::util::compose::composed;
 use crate::model::input::relation::schema::RelationSchema;
 use crate::model::input::relation::{RelationInputToTextInput, SpanOutputToRelationInput};
 use crate::model::output::relation::{RelationOutput, SpanOutputToRelationOutput};
-use crate::text::{splitter::Splitter, tokenizer::Tokenizer};
-use crate::util::compose::{compose, composed};
-use context::TensorsMeta;
+use super::token::TokenPipeline;
 use super::super::params::Parameters;
 use super::*;
+use context::TensorsMeta;
 
 /// Relation Extraction pipeline
 /// 

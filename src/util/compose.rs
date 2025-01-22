@@ -98,7 +98,7 @@ macro_rules! composed {
     ($e:expr, $($es:expr),+ ) => {{
         let t1 = $crate::composed! { $e };
         let t2 = $crate::composed! { $($es),+ };
-        compose(t1, t2)
+        $crate::util::compose::compose(t1, t2)
     }};
 
 }

@@ -2,8 +2,8 @@
 
 use std::path::Path;
 use crate::util::result::Result;
+use crate::util::compose::composed;
 use super::super::super::text::{splitter::Splitter, tokenizer::Tokenizer};
-use super::super::super::util::compose::{compose, composed};
 use super::super::params::{Parameters, RuntimeParameters};
 use super::super::{input, output};
 use super::*;
