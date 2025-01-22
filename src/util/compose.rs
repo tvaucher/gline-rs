@@ -46,7 +46,7 @@ pub trait Composable<I, O> {
     }
 }
 
-/// Makes any `Fn<I, O>` composable
+/// Makes any `Fn<I, Result<O>>` composable
 impl<F, I, O> Composable<I, O> for F where 
     F: Fn(I) -> Result<O> 
 {
