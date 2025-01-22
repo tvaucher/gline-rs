@@ -8,19 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Support for multi-word labels (issue [#1](https://github.com/fbilhaut/gline-rs/issues/1))
+- Issue with multi-word labels (issue [#1](https://github.com/fbilhaut/gline-rs/issues/1))
 
 ### Added
 
-- Pipeline for Relation Extraction
+- Pipeline for Relation Extraction, with related example
 - Matrix-level documentation of pre- and post-processing steps (see `doc/Processing.typ` or `doc/Processing.pdf`)
-- More unit tests
+- More unit-tests
 
 ### Changed
 
 - The `Model` struct is now opaque and parametrized by a pipeline which it handles by itself.
 - The `Pipeline` trait is now fully generic wrt. input, output and context types.
 - The `GLiNER` struct is now a light convenience wrapper around `Model`, `Pipeline` and `Parameters`.
+- The `Composable` trait is now implemented for `Model`+`Pipeline`+`Parameters` combos, to facilitate re-use and combination of pipelines. See `Pipeline::to_composable()` or `Model::to_composable()`.
 
 
 ## [0.9.1] - 2025-01-13
