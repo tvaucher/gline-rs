@@ -1,66 +1,49 @@
-use gliner::model::input::relation::schema::RelationSchema;
-use gliner::model::pipeline::relation::RelationPipeline;
-use gliner::model::pipeline::token::TokenPipeline;
 use gliner::util::result::Result;
-use gliner::model::{input::text::TextInput, params::{Parameters, RuntimeParameters}};
+use gliner::util::compose::{Composable, Print};
+use gliner::model::{inference::Model, params::{Parameters, RuntimeParameters}};
+use gliner::model::pipeline::{Pipeline, token::TokenPipeline, relation::RelationPipeline};
+use gliner::model::input::{text::TextInput, relation::schema::RelationSchema};
 
 
 /// Sample usage of the public API for Relation Extraction
 /// 
-/// Also provides an example of advanced use of `Model` and `Pipeline`.
+/// Also provides an example of direct use of `Model` and `Pipeline`.
 fn main() -> Result<()> {
-
-    // paths to the model and tokenizer
+    // Set model and tokenizer paths    
     const MODEL_PATH: &str = "models/gliner-multitask-large-v0.5/onnx/model.onnx";
-    const TOKENIZER_PATH: &str = "models/gliner-multitask-large-v0.5/tokenizer.json";    
+    const TOKENIZER_PATH: &str = "models/gliner-multitask-large-v0.5/tokenizer.json";
+    
+    // Use default parameters
+    let params: Parameters = Parameters::default();
+    let runtime_params = RuntimeParameters::default();
 
-    // define a sample input
-    let input = TextInput::from_str(
-        &[ 
-            "Bill Gates is an American businessman who co-founded Microsoft."
-        ],
-        &[
-            "person", 
-            "company",            
-        ]
-    )?;
-
-    // define a relation schema with a "founded" relation which subject has to be a "person" and object has to be a "company"
+    // Define a relation schema.
+    // We declare a "founded" relation which subject has to be a "person" and object has to be a "company"
     let mut relation_schema = RelationSchema::new();
     relation_schema.push_with_allowed_labels("founded", &["person"], &["company"]);
-    
-    // load de model
-    println!("Loading model...");  
-    let runtime_params =   RuntimeParameters::default();
-    let model = gliner::model::inference::Model::new(MODEL_PATH, runtime_params)?;
-    
-    // load two pipelines: one for NER, and one for Relation Extraction
-    let params = Parameters::default();
-    let ner_pipeline = TokenPipeline::new(TOKENIZER_PATH)?;
-    let rel_pipeline = RelationPipeline::default(TOKENIZER_PATH, &relation_schema)?;
 
-    // first, perform entity extraction using the NER pipeline
-    println!("Inferencing (NER)...");
-    let ner_output = model.inference(input, &ner_pipeline, &params)?;
-
-    // print results
-    for spans in &ner_output.spans {
-        for span in spans {
-            println!("{:3} | {:15} | {:10} | {:.1}%", span.sequence(), span.text(), span.class(), span.probability() * 100.0);
-        }
-    }
+    // Sample input text and entity labels
+    let input = TextInput::from_str(
+        &["Bill Gates is an American businessman who co-founded Microsoft."],
+        &["person", "company"],
+    )?;
     
-    // then, perform relation extraction using the RE pipeline, leveraging the output from NER
-    println!("Inferencing (RE)...");
-    let rel_output = model.inference(ner_output, &rel_pipeline, &params)?;
+    // Load the model that will be leveraged for the pipeline below
+    println!("Loading model...");      
+    let model = Model::new(MODEL_PATH, runtime_params)?;
     
-    // print results
-    for relations in &rel_output.relations {
-        for relation in relations {
-            println!("{:3} | {:15} | {:10} | {:15} | {:.1}%", relation.sequence(), relation.subject(), relation.class(), relation.object(), relation.probability() * 100.0);
-        }
-    }
+    // Relation Extraction needs Named Entity Recognition to be applied first.
+    // Here we combine the two pipelines: one for NER, and one for RE.
+    // For testing purposes we also insert printing functions.
+    let pipeline = gliner::composed![
+        TokenPipeline::new(TOKENIZER_PATH)?.to_composable(&model, &params),
+        Print::new(Some("Entities:\n"), None),
+        RelationPipeline::default(TOKENIZER_PATH, &relation_schema)?.to_composable(&model, &params),
+        Print::new(Some("Relations:\n"), None)
+    ];
 
+    // Actually perform inferences using the pipeline defined above
+    pipeline.apply(input)?;
+    
     Ok(())
-
 }
