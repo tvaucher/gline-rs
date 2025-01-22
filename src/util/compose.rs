@@ -30,7 +30,7 @@
 //! }
 //! ```
 
-use std::marker::PhantomData;
+use std::{fmt::Display, marker::PhantomData};
 use super::result::Result;
 
 
@@ -83,6 +83,37 @@ impl<T1, T2, I, O, X> Composable<I, O> for Composed<T1, T2, X> where
 {
     fn apply(&self, input: I) -> Result<O> {
         self.t2.apply(self.t1.apply(input)?)
+    }
+}
+
+
+/// Utility `Composable` that prints the passed value and returns it untouched
+pub struct Print {
+    prefix: Option<String>,
+    suffix: Option<String>,
+}
+
+impl Print {
+    pub fn new<S: Into<String>>(prefix: Option<S>, suffix: Option<S>) -> Self {
+        Self { 
+            prefix: prefix.map(|x| x.into()),
+            suffix: suffix.map(|x| x.into()),
+        }
+    }
+}
+
+impl Default for Print {
+    fn default() -> Self {
+        Self { prefix: None, suffix: None }
+    }
+}
+
+impl<T: Display> Composable<T,T> for Print {
+    fn apply(&self, input: T) -> Result<T> {
+        if let Some(prefix) = &self.prefix { print!("{prefix}") }
+        print!("{}", &input);
+        if let Some(suffix) = &self.suffix { print!("{suffix}") }
+        Ok(input)
     }
 }
 
