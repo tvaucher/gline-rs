@@ -4,7 +4,7 @@ ONNX Runtime's execution providers enable to perform inferences with hardware ac
 
 **Primarily refer to the [ort documentation](https://ort.pyke.io/perf/execution-providers) for details about the execution providers and their particular requirements.**
 
-## Related Features in `gline-rs`
+## Related Cargo Features in `gline-rs`
 
 Some features of `ort` are mirrored to allow enabling the necessary execution providers. For example `cuda`, `coreml` etc. See the main `Readme.md` for the complete list of available features.
 
@@ -34,5 +34,5 @@ SET PATH=%PATH%;"C:\Program Files\NVIDIA\CUDNN\v9.6\bin\12.6"
 Then, enabling the features `cuda` and `load-dynamic` should work as expected:
 
 ```dos
-> cargo run --example gpu --features=cuda,load-dynamic
+> cargo run --example benchmark-gpu --features=cuda,load-dynamic
 ```
