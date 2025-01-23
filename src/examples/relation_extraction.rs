@@ -8,6 +8,16 @@ use gliner::model::input::{text::TextInput, relation::schema::RelationSchema};
 /// Sample usage of the public API for Relation Extraction
 /// 
 /// Also provides an example of direct use of `Model` and `Pipeline`.
+/// 
+/// Expected output:
+/// 
+/// ```text
+/// Entities:
+/// 0 | Bill Gates      | person     | 99.9%
+/// 0 | Microsoft       | company    | 99.6%
+/// Relations:
+/// 0 | Bill Gates      | founded    | Microsoft       | 99.7%
+/// ```
 fn main() -> Result<()> {
     // Set model and tokenizer paths    
     const MODEL_PATH: &str = "models/gliner-multitask-large-v0.5/onnx/model.onnx";
