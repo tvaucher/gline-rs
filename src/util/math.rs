@@ -1,6 +1,5 @@
-use num_traits::Float;
+use ndarray::NdFloat;
 
-
-pub fn sigmoid<T: Float>(x: T) -> T {
+pub fn sigmoid<T: NdFloat>(x: T) -> T {
     T::one() / (T::one() + (-x).exp())
 }
