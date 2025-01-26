@@ -7,7 +7,7 @@ use super::super::super::text::{splitter::Splitter, tokenizer::Tokenizer};
 use super::super::params::{Parameters, RuntimeParameters};
 use super::super::{input, output};
 use super::*;
-use context::TensorsMeta;
+use context::EntityContext;
 
 
 /// Generic token-level pipeline
@@ -19,7 +19,7 @@ pub struct TokenPipeline<S, T> {
 impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for TokenPipeline<S, T> {
     type Input = TextInput;
     type Output = SpanOutput;
-    type Context = TensorsMeta;
+    type Context = EntityContext;
 
     fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context> {
         composed![

@@ -6,15 +6,15 @@ use crate::text::span::Span;
 use crate::text::token::Token;
 
 
-// Context for NER pipelines (to be renamed)
-pub struct TensorsMeta {
+// Context for NER pipelines
+pub struct EntityContext {
     pub texts: Vec<String>,
     pub tokens: Vec<Vec<Token>>,
     pub entities: Vec<String>,
     pub num_words: usize,
 }
 
-impl TensorsMeta {
+impl EntityContext {
     /// Creates a span given the necessary indexes and the tensor meta data.
     pub fn create_span(&self, sequence_id: usize, start_token: usize, end_token: usize, class: usize, probability: f32) -> Result<Span> {
         let sequence = self.tokens.get(sequence_id).ok_or(IndexError::new("meta.tokens", sequence_id))?;

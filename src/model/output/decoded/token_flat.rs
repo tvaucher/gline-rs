@@ -4,7 +4,7 @@ use std::iter;
 use crate::util::result::Result;
 use crate::model::output::tensors::TensorOutput;
 use crate::util::compose::Composable;
-use crate::{model::pipeline::context::TensorsMeta, text::span::Span};
+use crate::{model::pipeline::context::EntityContext, text::span::Span};
 use crate::util::math::sigmoid;
 use super::SpanOutput;
 
@@ -27,7 +27,7 @@ impl FlatTokenDecoder {
         }
     }
 
-    fn decode(&self, model_output: &[f32], input: &TensorsMeta) -> Result<Vec<Vec<Span>>> {        
+    fn decode(&self, model_output: &[f32], input: &EntityContext) -> Result<Vec<Vec<Span>>> {        
         let tokens = &input.tokens;
         let batch_size = tokens.len();
         let num_entities = input.entities.len();
@@ -112,7 +112,7 @@ impl<'a> Composable<TensorOutput<'a>, SpanOutput> for TensorsToDecoded {
     fn apply(&self, input: TensorOutput) -> Result<SpanOutput> {        
         let logits = input.tensors.get("logits").ok_or("logits not found in model output")?;
         let (_shape, logits) = logits.try_extract_raw_tensor::<f32>()?;
-        let spans = self.decoder.decode(logits, &input.meta)?;        
-        Ok(SpanOutput::new(input.meta.texts, input.meta.entities, spans))      
+        let spans = self.decoder.decode(logits, &input.context)?;        
+        Ok(SpanOutput::new(input.context.texts, input.context.entities, spans))      
     }
 }

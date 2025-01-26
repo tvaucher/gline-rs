@@ -4,7 +4,7 @@ use crate::util::result::Result;
 use crate::util::compose::Composable;
 use crate::util::math::sigmoid;
 use crate::text::span::Span;
-use crate::model::pipeline::context::TensorsMeta;
+use crate::model::pipeline::context::EntityContext;
 use crate::model::output::tensors::TensorOutput;
 use super::SpanOutput;
 
@@ -31,12 +31,12 @@ impl TensorsToDecoded {
 
     fn decode(&self, input: &TensorOutput) -> Result<Vec<Vec<Span>>> {
         // prepare output vector
-        let batch_size = input.meta.texts.len();
+        let batch_size = input.context.texts.len();
         let mut result: Vec<Vec<Span>> = std::iter::repeat_with(Vec::new).take(batch_size).collect();
 
         // look for logits and check its shape
         let logits = input.tensors.get("logits").ok_or("logits not found in model output")?;
-        self.check_shape(logits.shape()?, &input.meta)?;
+        self.check_shape(logits.shape()?, &input.context)?;
     
         // extract the actual array
         let array  = logits.try_extract_tensor::<f32>()?;
@@ -62,7 +62,7 @@ impl TensorsToDecoded {
                 }                
                 // create actual span
                 let (start_token, end_token, class) = span;
-                let span = input.meta.create_span(sequence_id, start_token, end_token, class, score)?;
+                let span = input.context.create_span(sequence_id, start_token, end_token, class, score)?;
                 result.get_mut(sequence_id).unwrap().push(span);
             }
         }
@@ -119,8 +119,8 @@ impl TensorsToDecoded {
     /// Checks coherence of the output shape.
     /// Expected shape is (3, batch_size, num_words, num_classes).
     /// The first dimension is related to `start`, `end` and `inside` positions in that order.
-    fn check_shape(&self, actual_shape: Vec<i64>, meta: &TensorsMeta) -> Result<()> {
-        let expected_shape = vec![3, meta.texts.len() as i64, meta.num_words as i64, meta.entities.len() as i64];
+    fn check_shape(&self, actual_shape: Vec<i64>, context: &EntityContext) -> Result<()> {
+        let expected_shape = vec![3, context.texts.len() as i64, context.num_words as i64, context.entities.len() as i64];
         if actual_shape != expected_shape {
             Err("unexpected logits shape".into())
         }
@@ -134,6 +134,6 @@ impl TensorsToDecoded {
 impl<'a> Composable<TensorOutput<'a>, SpanOutput> for TensorsToDecoded {
     fn apply(&self, input: TensorOutput) -> Result<SpanOutput> {        
         let decoded = self.decode(&input)?;
-        Ok(SpanOutput::new(input.meta.texts, input.meta.entities, decoded))
+        Ok(SpanOutput::new(input.context.texts, input.context.entities, decoded))
     }
 }

@@ -2,12 +2,12 @@ use ort::session::SessionInputs;
 use crate::util::compose::Composable;
 use crate::util::result::Result;
 use super::super::encoded::EncodedInput;
-use super::super::super::pipeline::context::TensorsMeta;
+use super::super::super::pipeline::context::EntityContext;
 
 /// Ready-for-inference tensors (token mode)
 pub struct TokenTensors<'a> {
     pub tensors: SessionInputs<'a, 'a>,
-    pub meta: TensorsMeta,    
+    pub context: EntityContext,    
 }
 
 impl<'a> TokenTensors<'a> {
@@ -21,7 +21,7 @@ impl<'a> TokenTensors<'a> {
         }?;
         Ok(Self {
             tensors: inputs.into(),
-            meta: TensorsMeta { 
+            context: EntityContext { 
                 texts: encoded.texts, 
                 tokens: encoded.tokens, 
                 entities: encoded.entities, 
@@ -50,8 +50,8 @@ impl<'a> Composable<EncodedInput, TokenTensors<'a>> for EncodedToTensors {
 pub struct TensorsToSessionInput { }
 
 
-impl<'a> Composable<TokenTensors<'a>, (SessionInputs<'a, 'a>, TensorsMeta)> for TensorsToSessionInput {
-    fn apply(&self, input: TokenTensors<'a>) -> Result<(SessionInputs<'a, 'a>, TensorsMeta)> {
-        Ok((input.tensors, input.meta))
+impl<'a> Composable<TokenTensors<'a>, (SessionInputs<'a, 'a>, EntityContext)> for TensorsToSessionInput {
+    fn apply(&self, input: TokenTensors<'a>) -> Result<(SessionInputs<'a, 'a>, EntityContext)> {
+        Ok((input.tensors, input.context))
     }
 }

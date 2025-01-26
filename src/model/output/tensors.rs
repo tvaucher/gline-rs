@@ -2,19 +2,19 @@
 
 use ort::session::SessionOutputs;
 use crate::util::{result::Result, compose::Composable};
-use crate::model::pipeline::context::TensorsMeta;
+use crate::model::pipeline::context::EntityContext;
 
 /// Represents the raw tensor output of the inference step
 pub struct TensorOutput<'a> {
-    pub meta: TensorsMeta,
+    pub context: EntityContext,
     pub tensors: SessionOutputs<'a, 'a>,
 }
 
 
 impl<'a> TensorOutput<'a> {
-    pub fn from(tensors: SessionOutputs<'a, 'a>, meta: TensorsMeta) -> Self {
+    pub fn from(tensors: SessionOutputs<'a, 'a>, context: EntityContext) -> Self {
         Self { 
-            meta,
+            context,
             tensors 
         }
     }
@@ -26,8 +26,8 @@ impl<'a> TensorOutput<'a> {
 pub struct SessionOutputToTensors { }
 
 
-impl<'a> Composable<(SessionOutputs<'a, 'a>, TensorsMeta), TensorOutput<'a>> for SessionOutputToTensors {
-    fn apply(&self, input: (SessionOutputs<'a, 'a>, TensorsMeta)) -> Result<TensorOutput<'a>> {
+impl<'a> Composable<(SessionOutputs<'a, 'a>, EntityContext), TensorOutput<'a>> for SessionOutputToTensors {
+    fn apply(&self, input: (SessionOutputs<'a, 'a>, EntityContext)) -> Result<TensorOutput<'a>> {
         Ok(TensorOutput::from(input.0, input.1))
     }
 }

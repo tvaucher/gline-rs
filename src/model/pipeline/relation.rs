@@ -9,7 +9,7 @@ use crate::model::output::relation::{RelationOutput, SpanOutputToRelationOutput}
 use super::token::TokenPipeline;
 use super::super::params::Parameters;
 use super::*;
-use context::{RelationContext, TensorsMeta};
+use context::{RelationContext, EntityContext};
 
 
 /// Relation Extraction pipeline
@@ -24,7 +24,7 @@ pub struct RelationPipeline<'a, S, T> {
 impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
     type Input = SpanOutput;
     type Output = RelationOutput;
-    type Context = (RelationContext, TensorsMeta);
+    type Context = (RelationContext, EntityContext);
 
     fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context> {
         composed_t![
