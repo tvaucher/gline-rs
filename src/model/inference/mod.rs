@@ -27,16 +27,15 @@ impl Model {
         Ok(Self {
             session,
         })
-    }    
+    }
 
-    
     pub fn inference<'a, P: Pipeline<'a>>(&'a self, input: P::Input, pipeline: &P, params: &Parameters) -> Result<P::Output> {
         // pre-process
-        let (input, meta) = pipeline.pre_processor(params).apply(input)?;
+        let (input, context) = pipeline.pre_processor(params).apply(input)?;
         // inference
         let output = self.run(input)?;                
         // post-process
-        let output = pipeline.post_processor(params).apply((output, meta))?;        
+        let output = pipeline.post_processor(params).apply((output, context))?;        
         // ok
         Ok(output)
     }
