@@ -97,23 +97,33 @@ impl std::fmt::Display for RelationOutput {
 
 /// SpanOutput -> RelationOutput
 pub struct SpanOutputToRelationOutput<'a> {
-    _schema: &'a RelationSchema, // for later use
+    schema: &'a RelationSchema,
 }
 
 impl<'a> SpanOutputToRelationOutput<'a> {
     pub fn new(schema: &'a RelationSchema) -> Self {
-        Self { _schema: schema }
+        Self { schema: schema }
+    }
+
+    fn is_valid(&self, relation: &Relation, context: &RelationContext) -> Result<bool> {
+        // check that the class of the object of the given relation if allowed by the relation schema
+        let potential_classes = context.entity_labels.get(relation.object()).ok_or(RelationFormatError::new("unexpected entity found as object"))?;
+        let spec = self.schema.relations().get(relation.class()).ok_or(RelationFormatError::new("unexpected relation class"))?;
+        Ok(spec.allows_one_of_objects(potential_classes))
     }
 }
 
 impl<'a> Composable<(SpanOutput, RelationContext), RelationOutput> for SpanOutputToRelationOutput<'a> {
     fn apply(&self, input: (SpanOutput, RelationContext)) -> Result<RelationOutput> {
-        let (input, _context) = input;        
+        let (input, context) = input;        
         let mut result = Vec::new();
         for seq in input.spans {
             let mut relations = Vec::new();
             for span in seq {
-                relations.push(Relation::from(span)?);
+                let relation = Relation::from(span)?;
+                if self.is_valid(&relation, &context)? {
+                    relations.push(relation);
+                }
             }
             result.push(relations);
         }

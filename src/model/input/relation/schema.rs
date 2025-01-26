@@ -55,6 +55,14 @@ impl RelationSpec {
     pub fn allows_object(&self, label: &str) -> bool {
         match &self.allowed_objects { None => true, Some(hs) => hs.contains(label) }
     }
+
+    pub fn allows_one_of_subjects(&self, labels: &HashSet<String>) -> bool {
+        match &self.allowed_subjects { None => true, Some(hs) => !hs.is_disjoint(labels) }
+    }
+
+    pub fn allows_one_of_objects(&self, labels: &HashSet<String>) -> bool {
+        match &self.allowed_objects { None => true, Some(hs) => !hs.is_disjoint(labels) }
+    }
 }
 
 impl Default for RelationSpec {
