@@ -1,15 +1,16 @@
 //! Pre-defined pipeline for Relation Extraction
 
 use std::path::Path;
+use crate::util::compose::*;
 use crate::text::{splitter::Splitter, tokenizer::Tokenizer};
-use crate::util::compose::composed;
 use crate::model::input::relation::schema::RelationSchema;
 use crate::model::input::relation::{RelationInputToTextInput, SpanOutputToRelationInput};
 use crate::model::output::relation::{RelationOutput, SpanOutputToRelationOutput};
 use super::token::TokenPipeline;
 use super::super::params::Parameters;
 use super::*;
-use context::TensorsMeta;
+use context::{RelationContext, TensorsMeta};
+
 
 /// Relation Extraction pipeline
 /// 
@@ -23,18 +24,20 @@ pub struct RelationPipeline<'a, S, T> {
 impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
     type Input = SpanOutput;
     type Output = RelationOutput;
-    type Context = TensorsMeta;
+    type Context = (RelationContext, TensorsMeta);
 
     fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context> {
-        composed![
-            SpanOutputToRelationInput::new(&self.relation_schema),
-            RelationInputToTextInput::default(),
+        composed_t![
+            composed![
+                SpanOutputToRelationInput::new(&self.relation_schema),
+                RelationInputToTextInput::default()
+            ],
             self.token_pipeline.pre_processor(params)            
-        ]        
+        ]
     }
 
     fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context> {
-        composed![
+        composed_rt![
             self.token_pipeline.post_processor(params),
             SpanOutputToRelationOutput::new(&self.relation_schema)
         ]

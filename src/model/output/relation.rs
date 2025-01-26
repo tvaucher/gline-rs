@@ -1,4 +1,5 @@
 use crate::model::input::relation::schema::RelationSchema;
+use crate::model::pipeline::context::RelationContext;
 use crate::util::compose::Composable;
 use crate::util::result::Result;
 use crate::text::span::Span;
@@ -105,8 +106,9 @@ impl<'a> SpanOutputToRelationOutput<'a> {
     }
 }
 
-impl<'a> Composable<SpanOutput, RelationOutput> for SpanOutputToRelationOutput<'a> {
-    fn apply(&self, input: SpanOutput) -> Result<RelationOutput> {
+impl<'a> Composable<(SpanOutput, RelationContext), RelationOutput> for SpanOutputToRelationOutput<'a> {
+    fn apply(&self, input: (SpanOutput, RelationContext)) -> Result<RelationOutput> {
+        let (input, _context) = input;        
         let mut result = Vec::new();
         for seq in input.spans {
             let mut relations = Vec::new();

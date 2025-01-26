@@ -1,6 +1,7 @@
 pub mod schema;
 
 use std::collections::{HashMap, HashSet};
+use crate::model::pipeline::context::RelationContext;
 use crate::util::result::Result;
 use crate::{model::output::decoded::SpanOutput, util::compose::Composable};
 use schema::RelationSchema;
@@ -97,9 +98,8 @@ impl<'a> Composable<SpanOutput, RelationInput> for SpanOutputToRelationInput<'a>
 pub struct RelationInputToTextInput {    
 }
 
-
-impl Composable<RelationInput, super::text::TextInput> for RelationInputToTextInput {
-    fn apply(&self, input: RelationInput) -> Result<super::text::TextInput> {
-        super::text::TextInput::new(input.prompts, input.labels)
+impl Composable<RelationInput, (super::text::TextInput, RelationContext)> for RelationInputToTextInput {
+    fn apply(&self, input: RelationInput) -> Result<(super::text::TextInput, RelationContext)> {
+        Ok((super::text::TextInput::new(input.prompts, input.labels)?, RelationContext { entity_labels: input.entity_labels }))
     }
 }

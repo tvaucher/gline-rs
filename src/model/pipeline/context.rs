@@ -1,8 +1,12 @@
+//! Data to be transmitted, beside the tensors themselves, from pre-processing to post-processing.
+
+use std::collections::{HashMap, HashSet};
 use crate::util::{error::IndexError, result::Result};
 use crate::text::span::Span;
 use crate::text::token::Token;
 
-/// Data to be transmitted, beside the tensors themselves, from pre-processing to post-processing
+
+// Context for NER pipelines (to be renamed)
 pub struct TensorsMeta {
     pub texts: Vec<String>,
     pub tokens: Vec<Vec<Token>>,
@@ -30,4 +34,10 @@ impl TensorsMeta {
             probability)
         )
     }
+}
+
+
+// Context for RE pipeline
+pub struct RelationContext {
+    pub entity_labels: HashMap<String, HashSet<String>>
 }
