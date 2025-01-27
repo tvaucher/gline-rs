@@ -35,7 +35,7 @@ Include `gline-rs` as a regular dependency in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-"gline-rs" = "0.9.1"
+"gline-rs" = "0.9.2"
 ```
 
 The public API is self-explanatory:
