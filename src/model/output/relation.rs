@@ -1,6 +1,6 @@
+use composable::Composable;
 use crate::model::input::relation::schema::RelationSchema;
 use crate::model::pipeline::context::RelationContext;
-use crate::util::compose::Composable;
 use crate::util::result::Result;
 use crate::text::span::Span;
 use super::decoded::SpanOutput;

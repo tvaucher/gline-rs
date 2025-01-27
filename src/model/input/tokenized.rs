@@ -1,7 +1,7 @@
+use composable::Composable;
 use crate::util::result::Result;
 use crate::text::token::Token;
 use crate::text::splitter::Splitter;
-use crate::util::compose::Composable;
 use super::text::TextInput;
 
 

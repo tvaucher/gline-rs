@@ -8,8 +8,7 @@ pub mod composable;
 
 
 use ort::session::{SessionInputs, SessionOutputs};
-use crate::util::result::Result;
-use crate::util::compose::Composable;
+use ::composable::Composable;
 use super::{input::text::TextInput, output::decoded::SpanOutput, params::Parameters};
 
 
@@ -30,6 +29,7 @@ pub trait Pipeline<'a> {
     type Context;
     
     fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context>;
+    
     fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context>;
 
     fn to_composable(self, model: &'a super::Model, params: &'a Parameters) -> impl Composable<Self::Input, Self::Output> where Self: Sized {

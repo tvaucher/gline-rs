@@ -2,9 +2,9 @@
 pub mod composable;
 
 use std::path::Path;
+use ::composable::Composable;
 use ort::session::{SessionInputs, SessionOutputs};
 use ort::session::{builder::GraphOptimizationLevel, Session};
-use crate::util::compose::Composable;
 use crate::util::result::Result;
 use super::params::{Parameters, RuntimeParameters};
 use super::pipeline::Pipeline;

@@ -1,7 +1,7 @@
 //! First step of span decoding (in token mode)
 
+use composable::Composable;
 use crate::util::result::Result;
-use crate::util::compose::Composable;
 use crate::util::math::sigmoid;
 use crate::text::span::Span;
 use crate::model::pipeline::context::EntityContext;

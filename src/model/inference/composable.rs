@@ -1,6 +1,7 @@
 //! Tools to make a `Model` available as a `Composable` (see also `Model::to_composable()`)
 
-use crate::util::{result::Result, compose::Composable};
+use ::composable::Composable;
+use crate::util::result::Result;
 use super::super::{params::Parameters, pipeline::Pipeline};
 use super::Model;
 

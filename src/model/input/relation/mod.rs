@@ -1,9 +1,10 @@
 pub mod schema;
 
+use composable::*;
 use std::collections::{HashMap, HashSet};
 use crate::model::pipeline::context::RelationContext;
 use crate::util::result::Result;
-use crate::{model::output::decoded::SpanOutput, util::compose::Composable};
+use crate::model::output::decoded::SpanOutput;
 use schema::RelationSchema;
 
 

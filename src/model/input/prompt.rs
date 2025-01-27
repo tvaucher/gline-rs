@@ -1,5 +1,6 @@
+use composable::Composable;
 use crate::util::result::Result;
-use crate::{text::{prompt::Prompt, token::Token}, util::compose::Composable};
+use crate::text::{prompt::Prompt, token::Token};
 use super::tokenized::TokenizedInput;
 
 

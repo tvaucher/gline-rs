@@ -1,8 +1,8 @@
 //! Pre-defined pipeline for span mode
 
 use std::path::Path;
+use ::composable::*;
 use crate::util::result::Result;
-use crate::util::compose::composed;
 use super::super::super::text::{splitter::Splitter, tokenizer::Tokenizer};
 use super::super::params::{Parameters, RuntimeParameters};
 use super::super::{input, output};

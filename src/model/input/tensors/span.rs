@@ -1,5 +1,5 @@
 use ort::session::SessionInputs;
-use crate::util::compose::Composable;
+use composable::Composable;
 use crate::util::result::Result;
 use super::super::encoded::EncodedInput;
 use super::super::super::pipeline::context::EntityContext;

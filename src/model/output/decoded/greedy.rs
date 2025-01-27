@@ -1,7 +1,8 @@
 //! Greedy-search is the second step of span decoding
 
+use composable::Composable;
 use crate::util::result::Result;
-use crate::{text::span::Span, util::compose::Composable};
+use crate::text::span::Span;
 use super::SpanOutput;
 
 /// Greedy decoding implementation.

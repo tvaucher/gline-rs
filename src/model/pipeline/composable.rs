@@ -1,7 +1,7 @@
 //! Tools to make a `Pipeline` available as a `Composable` (see also `Pipeline::to_composable()`)
 
+use composable::Composable;
 use crate::util::result::Result;
-use crate::util::compose::Composable;
 use super::super::super::model::inference::Model;
 use super::super::params::Parameters;
 use super::Pipeline;

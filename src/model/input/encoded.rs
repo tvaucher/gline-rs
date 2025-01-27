@@ -1,5 +1,6 @@
+use composable::Composable;
 use crate::util::result::Result;
-use crate::{text::{token::Token, tokenizer::Tokenizer}, util::compose::Composable};
+use crate::text::{token::Token, tokenizer::Tokenizer};
 use super::prompt::PromptInput;
 use ndarray::{Array, Array2, ArrayView};
 

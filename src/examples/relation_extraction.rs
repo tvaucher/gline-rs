@@ -1,5 +1,5 @@
+use composable::*;
 use gliner::util::result::Result;
-use gliner::util::compose::{Composable, Print};
 use gliner::model::{inference::Model, params::{Parameters, RuntimeParameters}};
 use gliner::model::pipeline::{Pipeline, token::TokenPipeline, relation::RelationPipeline};
 use gliner::model::input::{text::TextInput, relation::schema::RelationSchema};
@@ -45,7 +45,7 @@ fn main() -> Result<()> {
     // Relation Extraction needs Named Entity Recognition to be applied first.
     // Here we combine the two pipelines: one for NER, and one for RE.
     // For testing purposes we also insert printing functions.
-    let pipeline = gliner::composed![
+    let pipeline = composed![
         TokenPipeline::new(TOKENIZER_PATH)?.to_composable(&model, &params),
         Print::new(Some("Entities:\n"), None),
         RelationPipeline::default(TOKENIZER_PATH, &relation_schema)?.to_composable(&model, &params),

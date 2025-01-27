@@ -1,7 +1,7 @@
 //! Pre-defined pipeline for Relation Extraction
 
 use std::path::Path;
-use crate::util::compose::*;
+use ::composable::*;
 use crate::text::{splitter::Splitter, tokenizer::Tokenizer};
 use crate::model::input::relation::schema::RelationSchema;
 use crate::model::input::relation::{RelationInputToTextInput, SpanOutputToRelationInput};

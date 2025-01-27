@@ -1,7 +1,8 @@
 //! Encapsulation of raw tensor outputs
 
 use ort::session::SessionOutputs;
-use crate::util::{result::Result, compose::Composable};
+use composable::Composable;
+use crate::util::result::Result;
 use crate::model::pipeline::context::EntityContext;
 
 /// Represents the raw tensor output of the inference step

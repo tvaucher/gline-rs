@@ -1,8 +1,8 @@
 //! First step of span decoding (in span mode)
 
+use composable::Composable;
 use crate::util::math::sigmoid;
 use crate::util::result::Result;
-use crate::util::compose::Composable;
 use crate::text::span::Span;
 use crate::model::pipeline::context::EntityContext;
 use crate::model::output::tensors::TensorOutput;

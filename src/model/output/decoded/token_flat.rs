@@ -1,9 +1,9 @@
 //! Experimental alternative for the first step of span decoding (in token mode)
 
 use std::iter;
+use composable::Composable;
 use crate::util::result::Result;
 use crate::model::output::tensors::TensorOutput;
-use crate::util::compose::Composable;
 use crate::{model::pipeline::context::EntityContext, text::span::Span};
 use crate::util::math::sigmoid;
 use super::SpanOutput;
