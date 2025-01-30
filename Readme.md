@@ -122,7 +122,7 @@ The first step is to pass the appropriate execution providers in `RuntimeParamet
 ```rust
 let rtp = RuntimeParameters::default().with_execution_providers([
     CUDAExecutionProvider::default().build()
-])
+]);
 ```
 
 The second step is to activate the appropriate features (see related section below), otherwise the example will **silently fall-back** to CPU. For example:
@@ -134,7 +134,7 @@ $ cargo run --example benchmark-gpu --features=cuda
 Please refer to `doc/ORT.md` for details about execution providers.
 
 
-## 📦 Create Features
+## 📦 Crate Features
 
 This create mirrors the following `ort` features:
 
