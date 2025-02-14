@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [0.9.3] - UNRELEASED
 
-- ...
+### Changed
+
+- The generic pipeline framework has been externalized, see the [`composable`](https://github.com/fbilhaut/composable) and [`orp`](https://github.com/fbilhaut/orp) crates. The public API is left unchanged, beside minor import adaptations (see examples).
 
 
 ## [0.9.2] - 2025-01-26

@@ -4,12 +4,11 @@ pub mod params;
 pub mod pipeline;
 pub mod input;
 pub mod output;
-pub mod inference;
 
 use crate::util::result::Result;
-use pipeline::Pipeline;
+use orp::pipeline::Pipeline;
 use params::Parameters;
-use inference::Model;
+use orp::model::Model;
 
 
 /// Basic GLiNER, to be parametrized by a specific pipeline (see implementations within the pipeline module)
@@ -22,7 +21,7 @@ pub struct GLiNER<P> {
 }
 
 
-impl<'a, P: Pipeline<'a>> GLiNER<P> {
+impl<'a, P: Pipeline<'a, Parameters = Parameters>> GLiNER<P> {
     pub fn inference(&'a self, input: P::Input) -> Result<P::Output> {
         self.model.inference(input, &self.pipeline, &self.params)
     }

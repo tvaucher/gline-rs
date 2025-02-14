@@ -2,14 +2,15 @@
 
 use std::path::Path;
 use ::composable::*;
+use orp::pipeline::*;
+use crate::model::output::decoded::SpanOutput;
 use crate::text::{splitter::Splitter, tokenizer::Tokenizer};
 use crate::model::input::relation::schema::RelationSchema;
 use crate::model::input::relation::{RelationInputToTextInput, SpanOutputToRelationInput};
 use crate::model::output::relation::{RelationOutput, SpanOutputToRelationOutput};
 use super::token::TokenPipeline;
 use super::super::params::Parameters;
-use super::*;
-use context::{RelationContext, EntityContext};
+use super::context::{RelationContext, EntityContext};
 
 
 /// Relation Extraction pipeline
@@ -25,6 +26,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
     type Input = SpanOutput;
     type Output = RelationOutput;
     type Context = (RelationContext, EntityContext);
+    type Parameters = Parameters;
 
     fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context> {
         composed_t![

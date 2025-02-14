@@ -1,13 +1,12 @@
-//! Pre-defined pipeline for span mode
+//! Pre-defined pipeline for NER (span mode)
 
 use std::path::Path;
 use ::composable::*;
+use orp::{pipeline::*, params::RuntimeParameters};
 use crate::util::result::Result;
 use super::super::super::text::{splitter::Splitter, tokenizer::Tokenizer};
-use super::super::params::{Parameters, RuntimeParameters};
-use super::super::{input, output};
-use super::*;
-use context::EntityContext;
+use super::super::{input, output, params};
+use super::context::EntityContext;
 
 
 /// Generic span-level pipeline
@@ -17,11 +16,12 @@ pub struct SpanPipeline<S, T> {
 }
 
 impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for SpanPipeline<S, T> {
-    type Input = TextInput;
-    type Output = SpanOutput;
+    type Input = input::text::TextInput;
+    type Output = output::decoded::SpanOutput;
     type Context = EntityContext;
+    type Parameters = params::Parameters;
 
-    fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context>{
+    fn pre_processor(&self, params: &Self::Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context>{
         composed![
             input::tokenized::RawToTokenized::new(&self.splitter, params.max_length),
             input::prompt::TokenizedToPrompt::default(),
@@ -31,7 +31,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for SpanPipeline<S, T> {
         ]
     }
 
-    fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context> {
+    fn post_processor(&self, params: &Self::Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context> {
         composed![
             output::tensors::SessionOutputToTensors::default(),
             output::decoded::span::TensorsToDecoded::new(params.threshold, params.max_width),            
@@ -56,7 +56,7 @@ pub type SpanMode = SpanPipeline<crate::text::splitter::RegexSplitter, crate::te
 
 /// Specific GLiNER implementation using the default span-mode pipeline
 impl super::super::GLiNER<SpanMode> {
-    pub fn new<P: AsRef<Path>>(params: Parameters, runtime_params: RuntimeParameters, tokenizer_path: P, model_path: P) -> Result<Self> {
+    pub fn new<P: AsRef<Path>>(params: params::Parameters, runtime_params: RuntimeParameters, tokenizer_path: P, model_path: P) -> Result<Self> {
         Ok(Self {            
             model: super::super::Model::new(model_path, runtime_params)?,
             pipeline: SpanPipeline::new(tokenizer_path)?,

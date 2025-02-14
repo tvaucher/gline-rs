@@ -1,7 +1,10 @@
 use composable::*;
+use orp::model::Model;
+use orp::pipeline::*;
+use orp::params::RuntimeParameters;
 use gliner::util::result::Result;
-use gliner::model::{inference::Model, params::{Parameters, RuntimeParameters}};
-use gliner::model::pipeline::{Pipeline, token::TokenPipeline, relation::RelationPipeline};
+use gliner::model::params::Parameters;
+use gliner::model::pipeline::{token::TokenPipeline, relation::RelationPipeline};
 use gliner::model::input::{text::TextInput, relation::schema::RelationSchema};
 
 

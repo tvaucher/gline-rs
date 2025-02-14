@@ -1,5 +1,6 @@
+use orp::params::RuntimeParameters;
 use gliner::util::result::Result;
-use gliner::model::{input::text::TextInput, params::{Parameters, RuntimeParameters}, GLiNER};
+use gliner::model::{GLiNER, input::text::TextInput, params::Parameters};
 use gliner::model::pipeline::token::TokenMode;
 
 /// Sample usage of the public API in token mode

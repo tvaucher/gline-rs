@@ -38,6 +38,7 @@ path = "src/examples/benchmark_gpu.rs"
 
 [dependencies]
 composable = "0.9.0"
+orp = "0.9.1"
 regex = "1.11.1"
 ort = { version="=2.0.0-rc.9" }
 tokenizers = { version="0.21.0", features=["http"] }

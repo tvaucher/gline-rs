@@ -1,7 +1,8 @@
+use orp::params::RuntimeParameters;
 use gliner::model::input;
 use gliner::model::pipeline::token::TokenMode;
 use gliner::util::result::Result;
-use gliner::model::{params::{Parameters, RuntimeParameters}, GLiNER};
+use gliner::model::{GLiNER, params::Parameters};
 
 fn main() -> Result<()> {    
 

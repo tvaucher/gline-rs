@@ -1,6 +1,6 @@
-use gliner::model::params::RuntimeParameters;
+use orp::params::RuntimeParameters;
 use gliner::util::result::Result;
-use gliner::model::{input::text::TextInput, params::Parameters, GLiNER};
+use gliner::model::{GLiNER, input::text::TextInput, params::Parameters};
 use gliner::model::pipeline::span::SpanMode;
 
 /// Sample usage of the public API in span mode

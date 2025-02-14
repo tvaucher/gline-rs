@@ -1,6 +1,4 @@
-//! Processing and inferencing parameters
-
-use ort::execution_providers::ExecutionProviderDispatch;
+//! Processing parameters
 
 
 /// Represents the set of parameters for the whole pipeline
@@ -73,41 +71,4 @@ impl Parameters {
         self
     }
 
-}
-
-
-/// Represents the set of parameters for the inference engine
-/// 
-/// The easiest way to instanciate sound parameters is to use the
-/// `default()` constructor and then use individual setters as needed.
-pub struct RuntimeParameters {
-    /// Number ot threads (default: 4)
-    pub threads: usize,
-    /// Execution providers (default: none (-> CPU))
-    pub execution_providers: Vec<ExecutionProviderDispatch>,
-}
-
-impl RuntimeParameters {
-    pub fn new(threads: usize, execution_providers: impl IntoIterator<Item = ExecutionProviderDispatch>) -> Self {
-        Self {
-            threads,
-            execution_providers: execution_providers.into_iter().collect(),
-        }
-    }
-
-    pub fn with_threads(mut self, threads: usize) -> Self {
-        self.threads = threads;
-        self
-    }
-
-    pub fn with_execution_providers(mut self, execution_providers: impl IntoIterator<Item = ExecutionProviderDispatch>) -> Self {
-        self.execution_providers = execution_providers.into_iter().collect();
-        self
-    }
-}
-
-impl Default for RuntimeParameters {
-    fn default() -> Self {
-        Self::new(4, [])
-    }
 }
