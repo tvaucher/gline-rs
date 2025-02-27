@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [0.9.3] - UNRELEASED
 
+### Fixed
+
+- Fix word mask on words with sub-tokens (PR [#3](https://github.com/fbilhaut/gline-rs/pull/3)).
+
 ### Changed
 
 - The generic pipeline framework has been externalized, see the [`composable`](https://github.com/fbilhaut/composable) and [`orp`](https://github.com/fbilhaut/orp) crates. The public API is left unchanged, beside minor import adaptations (see examples).
