@@ -19,7 +19,8 @@ fn main() -> Result<()> {
             "I am James Bond",
             "This is James and I live in Chelsea, London.",
             "My name is Bond, James Bond.",
-            "I like to drive my Aston Martin."
+            "I like to drive my Aston Martin.",
+            "The villain in the movie is Auric Goldfinger."
         ],
         &[
             "person", 
@@ -34,7 +35,7 @@ fn main() -> Result<()> {
     println!("Results:");
     for spans in output.spans {
         for span in spans {
-            println!("{:3} | {:15} | {:10} | {:.1}%", span.sequence(), span.text(), span.class(), span.probability() * 100.0);
+            println!("{:3} | {:16} | {:10} | {:.1}%", span.sequence(), span.text(), span.class(), span.probability() * 100.0);
         }
     }
 
