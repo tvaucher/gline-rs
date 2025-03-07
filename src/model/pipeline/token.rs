@@ -35,7 +35,8 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for TokenPipeline<S, T> {
         composed![
             output::tensors::SessionOutputToTensors::default(),            
             output::decoded::token::TensorsToDecoded::new(params.threshold),
-            output::decoded::greedy::GreedySearch::new(params.flat_ner, params.multi_label)
+            output::decoded::sort::SpanSort::default(),
+            output::decoded::greedy::GreedySearch::new(params.flat_ner, params.dup_label, params.multi_label)
         ]
     }
 }

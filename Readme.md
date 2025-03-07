@@ -158,11 +158,12 @@ Comparing performances from one implementation to another is complicated, as the
 Both implementations have been tested under the following configuration:
 
 * Dataset: subset of the [NuNER](https://huggingface.co/datasets/numind/NuNER) dataset (first 100 entries)
-* Mode: token, flat_ner: true, multi_label: false
+* Mode: token, flat_ner: true
 * Number of entity classes: 3
 * Threshold: 0.5
 * Model: [gliner-multitask-large-v0.5](https://huggingface.co/knowledgator/gliner-multitask-large-v0.5)
 * CPU specs: Intel Core i9 @2.3Ghz with 8 cores (12 threads)
+* `gline-rs` version: 0.9.0
 
 ### GPU
 
@@ -178,6 +179,7 @@ The configuration of the test is similar to the above, except:
 * Execution provider: CUDA
 * GPU specs: NVIDIA RTX 4080 (16Gb VRAM)
 * CPU specs: Intel Core i7 13700KF @3.4Ghz 
+* `gline-rs` version: 0.9.1
 
 (Comparison with the original implementation has yet to be done.)
 

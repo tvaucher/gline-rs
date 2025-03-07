@@ -7,9 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [0.9.3] - UNRELEASED
 
+Two important fixes in this release (see "fixed" below). It also comes with very minor changes in the public API:
+* Some imports might need to be adapted due to externalization of the pipeline system in another crate.
+* The (optional) `dup_label` flag has been added to the parameters to allow/disallow overlapping spans with the same label.
+
 ### Fixed
 
-- Fix word mask on words with sub-tokens (PR [#3](https://github.com/fbilhaut/gline-rs/pull/3)).
+- Fix word mask on words with sub-tokens (PR [#3](https://github.com/fbilhaut/gline-rs/pull/3)) which prevented some (multi-token) entities to be recognized.
+- Fix the handling of overlapping spans (the `flat_ner` and associated flags were not correctly honored). This fix solves the problem described in PR [#4](https://github.com/fbilhaut/gline-rs/pull/4).
 
 ### Changed
 

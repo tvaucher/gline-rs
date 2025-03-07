@@ -34,8 +34,9 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for SpanPipeline<S, T> {
     fn post_processor(&self, params: &Self::Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context> {
         composed![
             output::tensors::SessionOutputToTensors::default(),
-            output::decoded::span::TensorsToDecoded::new(params.threshold, params.max_width),            
-            output::decoded::greedy::GreedySearch::new(params.flat_ner, params.multi_label)
+            output::decoded::span::TensorsToDecoded::new(params.threshold, params.max_width),
+            output::decoded::sort::SpanSort::default(),
+            output::decoded::greedy::GreedySearch::new(params.flat_ner, params.dup_label, params.multi_label)
         ]
     }
 }

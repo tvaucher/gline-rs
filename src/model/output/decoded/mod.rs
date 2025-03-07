@@ -3,6 +3,7 @@
 pub mod span;
 pub mod token;
 pub mod token_flat;
+pub mod sort;
 pub mod greedy;
 
 use crate::text::span::Span;
