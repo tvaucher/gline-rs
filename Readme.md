@@ -74,8 +74,10 @@ To leverage `gline-rs`, you need the appropriate models in [ONNX](https://onnx.a
 
 Ready-to-use models can be downloaded from 🤗 Hugging Face repositories. For example:
 
-* [gliner small 2.1](https://huggingface.co/onnx-community/gliner_small-v2.1)
-* [gliner multitask large 0.5](https://huggingface.co/knowledgator/gliner-multitask-large-v0.5)
+* [gliner small 2.1](https://huggingface.co/onnx-community/gliner_small-v2.1) ([original](https://huggingface.co/urchade/gliner_small-v2.1))
+* [gliner multitask large 0.5](https://huggingface.co/onnx-community/gliner-multitask-large-v0.5) ([original](https://huggingface.co/knowledgator/gliner-multitask-large-v0.5))
+
+
 
 To run the examples without any modification, this file structure is expected:
 
