@@ -12,7 +12,7 @@ pub struct SpanTensors<'a> {
     pub context: EntityContext,    
 }
 
-impl<'a> SpanTensors<'a> {
+impl SpanTensors<'_> {
 
     pub fn from(encoded: EncodedInput, max_width: usize) -> Result<Self> {
         let (span_idx, span_mask) = Self::make_spans_tensors(&encoded, max_width);

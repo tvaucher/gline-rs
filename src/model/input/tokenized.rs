@@ -48,7 +48,7 @@ impl<'a, S> RawToTokenized<'a, S> {
     }
 }
 
-impl<'a, S: Splitter> Composable<TextInput, TokenizedInput> for RawToTokenized<'a, S> {
+impl<S: Splitter> Composable<TextInput, TokenizedInput> for RawToTokenized<'_, S> {
     fn apply(&self, input: TextInput) -> Result<TokenizedInput> {
         TokenizedInput::from(input, self.splitter, self.max_length)
     }

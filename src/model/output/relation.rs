@@ -102,7 +102,7 @@ pub struct SpanOutputToRelationOutput<'a> {
 
 impl<'a> SpanOutputToRelationOutput<'a> {
     pub fn new(schema: &'a RelationSchema) -> Self {
-        Self { schema: schema }
+        Self { schema }
     }
 
     fn is_valid(&self, relation: &Relation, context: &RelationContext) -> Result<bool> {
@@ -113,7 +113,7 @@ impl<'a> SpanOutputToRelationOutput<'a> {
     }
 }
 
-impl<'a> Composable<(SpanOutput, RelationContext), RelationOutput> for SpanOutputToRelationOutput<'a> {
+impl Composable<(SpanOutput, RelationContext), RelationOutput> for SpanOutputToRelationOutput<'_> {
     fn apply(&self, input: (SpanOutput, RelationContext)) -> Result<RelationOutput> {
         let (input, context) = input;        
         let mut result = Vec::new();

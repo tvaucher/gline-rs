@@ -108,7 +108,7 @@ impl TensorsToDecoded {
     }
 }
 
-impl<'a> Composable<TensorOutput<'a>, SpanOutput> for TensorsToDecoded {
+impl Composable<TensorOutput<'_>, SpanOutput> for TensorsToDecoded {
     fn apply(&self, input: TensorOutput) -> Result<SpanOutput> {        
         let logits = input.tensors.get("logits").ok_or("logits not found in model output")?;
         let (_shape, logits) = logits.try_extract_raw_tensor::<f32>()?;

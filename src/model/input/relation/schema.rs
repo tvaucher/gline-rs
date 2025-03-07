@@ -34,6 +34,9 @@ impl RelationSchema {
     
 }
 
+impl Default for RelationSchema {
+    fn default() -> Self { Self::new() }
+}
 
 pub struct RelationSpec {
     allowed_subjects: Option<HashSet<String>>,

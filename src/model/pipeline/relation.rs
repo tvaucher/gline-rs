@@ -31,7 +31,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
     fn pre_processor(&self, params: &Parameters) -> impl PreProcessor<'a, Self::Input, Self::Context> {
         composed_t![
             composed![
-                SpanOutputToRelationInput::new(&self.relation_schema),
+                SpanOutputToRelationInput::new(self.relation_schema),
                 RelationInputToTextInput::default()
             ],
             self.token_pipeline.pre_processor(params)            
@@ -41,7 +41,7 @@ impl<'a, S: Splitter, T:Tokenizer> Pipeline<'a> for RelationPipeline<'a, S, T> {
     fn post_processor(&self, params: &Parameters) -> impl PostProcessor<'a, Self::Output, Self::Context> {
         composed_rt![
             self.token_pipeline.post_processor(params),
-            SpanOutputToRelationOutput::new(&self.relation_schema)
+            SpanOutputToRelationOutput::new(self.relation_schema)
         ]
     }
 }

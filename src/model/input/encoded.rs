@@ -144,7 +144,7 @@ impl<'a, T> PromptsToEncoded<'a, T> {
     }
 }
 
-impl<'a, T: Tokenizer> Composable<PromptInput, EncodedInput> for PromptsToEncoded<'a, T> {
+impl<T: Tokenizer> Composable<PromptInput, EncodedInput> for PromptsToEncoded<'_, T> {
     fn apply(&self, input: PromptInput) -> Result<EncodedInput> {
         EncodedInput::from(input, self.tokenizer)
     }

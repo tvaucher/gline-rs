@@ -69,7 +69,7 @@ impl RelationInput {
         let mut entity_labels = HashMap::<String, HashSet<String>>::new();
         for seq in &spans.spans {
             for span in seq {
-                entity_labels.entry(span.text().to_string()).or_insert(HashSet::new()).insert(span.class().to_string());
+                entity_labels.entry(span.text().to_string()).or_default().insert(span.class().to_string());
             }
         }
         entity_labels
@@ -88,7 +88,7 @@ impl<'a> SpanOutputToRelationInput<'a> {
     }
 }
 
-impl<'a> Composable<SpanOutput, RelationInput> for SpanOutputToRelationInput<'a> {
+impl Composable<SpanOutput, RelationInput> for SpanOutputToRelationInput<'_> {
     fn apply(&self, input: SpanOutput) -> Result<RelationInput> {
         Ok(RelationInput::from_spans(input, self.schema))
     }

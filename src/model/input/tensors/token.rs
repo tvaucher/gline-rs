@@ -10,7 +10,7 @@ pub struct TokenTensors<'a> {
     pub context: EntityContext,    
 }
 
-impl<'a> TokenTensors<'a> {
+impl TokenTensors<'_> {
 
     pub fn from(encoded: EncodedInput) -> Result<Self> {
         let inputs = ort::inputs!{
