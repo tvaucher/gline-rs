@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [0.9.4] - UNRELEASED
 
+### Fixed
+
+* Fix words mask when the first non-label word is encoded as multiple tokens (PR [#6](https://github.com/fbilhaut/gline-rs/pull/6)).
+
+### Added
+
+* Basic github CI workflow (PR [#7](https://github.com/fbilhaut/gline-rs/pull/7)).
+
 
 ## [0.9.3] - 2025-03-08
 
